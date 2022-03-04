@@ -1,0 +1,234 @@
+1. What is a module?
+A file containing Python definitions and statements, which can be later imported and used when necessary
+a module is identified by its name.
+
+Computer code has a tendency to grow
+Growing code is in fact a growing problem. A larger code always means tougher maintenance.
+
+Searching for bugs is always easier where the code is smaller
+
+From decomposition perspective:
+divide all the tasks among the developers;
+join all the created parts into one working whole.
+
+For example, a certain project can be divided into two main parts:
+the user interface (the part that communicates with the user using widgets and a graphical screen)
+the logic (the part processing data and producing results)
+
+Each of these parts can be (most likely) divided into smaller ones, and so on. Such a process is often called decomposition.
+
+Modules are the answer.
+
+you are the module's user;
+or: you are the module's supplier.
+
+
+All these modules (provided at start by Python), along with the built-in functions, form the Python standard library
+
+Each module consists of entities (like a book consists of chapters). These entities can be functions, variables, constants, classes, and objects.
+
+
+2. Importing a module
+The simplest way to import a particular module is to use the import instruction as follows:
+import math
+
+The clause contains:
+
+the import keyword;
+the name of the module which is subject to import.
+
+The instruction may be located anywhere in your code, but it must be placed before the first use of any of the module's entities.
+
+import math
+import sys
+
+or
+
+import math, sys
+
+The modules' list may be arbitrarily long.
+
+3. Namespace
+A namespace is a space (understood in a non-physical context) in which some names exist and the names don't conflict with each other
+(i.e., there are not two different objects of the same name).
+
+Inside a certain namespace, each name must remain unique.
+
+If the module of a specified name exists and is accessible (a module is in fact a Python source file), Python imports its contents,
+i.e., all the names defined in the module become known, but they don't enter your code's namespace.
+
+put:
+
+the name of the module (e.g., math)
+a dot (i.e., .)
+the name of the entity (e.g., pi)
+
+Such a form clearly indicates the namespace in which the name exists.
+
+import math
+print(math.sin(math.pi/2))
+
+Now we're going to show you how the two namespaces (yours and the module's one) can coexist.
+
+import math
+
+
+def sin(x):
+    if 2 * x == pi:
+        return 0.99999999
+    else:
+        return None
+
+
+pi = 3.14
+
+print(sin(pi/2))
+print(math.sin(math.pi/2))
+
+
+from math import pi
+
+The instruction consists of the following elements:
+
+the from keyword;
+the name of the module to be (selectively) imported;
+the import keyword;
+the name or list of names of the entity/entities which are being imported into the namespace.
+
+The instruction consists of the following elements:
+
+the from keyword;
+the name of the module to be (selectively) imported;
+the import keyword;
+the name or list of names of the entity/entities which are being imported into the namespace.
+
+Note: no other entities are imported. Moreover, you cannot import additional entities using a qualification
+
+!!!the imported symbols may supersede their previous definitions within the namespace!!!
+
+
+Importing a module: *
+from module import *
+Such an instruction imports all entities from the indicated module.
+Is it unsafe? Yes, it is - you may not be able to avoid name conflicts
+
+Importing a module: the as keyword (aliasing)
+Aliasing causes the module to be identified under a different name than the original. This may shorten the qualified names, too
+import module as alias
+e.g. import math as m
+print(m.sin(m.pi/2))
+
+!!!Note: after successful execution of an aliased import, the original module name becomes inaccessible and must not be used.!!!
+
+The phrase name as alias can be repeated
+from module import n as a, m as b, o as c
+
+4. Key takeaways
+
+1. If you want to import a module as a whole, you can do it using the import module_name statement. You are allowed to import more than one module at once using a comma-separated list. For example:
+
+import mod1
+import mod2, mod3, mod4
+
+
+although the latter form is not recommended due to stylistic reasons, and it's better and prettier to express the same intention in more a verbose and explicit form, such as:
+
+import mod2
+import mod3
+import mod4
+
+
+2. If a module is imported in the above manner and you want to access any of its entities, you need to prefix the entity's name using dot notation. For example:
+
+import my_module
+
+result = my_module.my_function(my_module.my_data)
+
+
+The snippet makes use of two entities coming from the my_module module: a function named my_function() and a variable named my_data. Both names must be prefixed by my_module. None of the imported entity names conflicts with the identical names existing in your code's namespace.
+
+
+3. You are allowed not only to import a module as a whole, but to import only individual entities from it. In this case, the imported entities must not be prefixed when used. For example:
+
+from module import my_function, my_data
+
+result = my_function(my_data)
+
+
+The above way - despite its attractiveness - is not recommended because of the danger of causing conflicts with names derived from importing the code's namespace.
+
+
+4. The most general form of the above statement allows you to import all entities offered by a module:
+
+from my_module import *
+
+result = my_function(my_data)
+
+
+Note: this import's variant is not recommended due to the same reasons as previously (the threat of a naming conflict is even more dangerous here).
+
+5. You can change the name of the imported entity "on the fly" by using the as phrase of the import. For example:
+
+from module import my_function as fun, my_data as dat
+
+result = fun(dat)
+
+
+
+Exercise 1
+
+You want to invoke the function make_money() contained in the module named mint. Your code begins with the following line:
+
+import mint
+
+
+What is the proper form of the function's invocation?
+
+Check
+mint.make_money()
+
+
+
+Exercise 2
+
+You want to invoke the function make_money() contained in the module named mint. Your code begins with the following line:
+
+from mint import make_money
+
+
+What is the proper form of the function's invocation?
+
+Check
+make_money()
+
+
+
+Exercise 3
+
+You've written a function named make_money on your own. You need to import a function of the same name from the mint module and don't want to rename any of your previously defined names. Which variant of the import statement may help you with the issue?
+
+Check
+# sample solution
+from mint import make_money as make_more_money
+
+
+
+Exercise 4
+
+What form of the make_money function invocation is valid if your code starts with the following line?
+
+from mint import *
+
+
+Check
+make_money()
+
+
+https://edube.org/learn/pe-2/section-summary-88
+
+
+
+
+
+
+
