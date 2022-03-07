@@ -95,13 +95,6 @@ the name of the module to be (selectively) imported;
 the import keyword;
 the name or list of names of the entity/entities which are being imported into the namespace.
 
-The instruction consists of the following elements:
-
-the from keyword;
-the name of the module to be (selectively) imported;
-the import keyword;
-the name or list of names of the entity/entities which are being imported into the namespace.
-
 Note: no other entities are imported. Moreover, you cannot import additional entities using a qualification
 
 !!!the imported symbols may supersede their previous definitions within the namespace!!!
@@ -225,6 +218,244 @@ make_money()
 
 
 https://edube.org/learn/pe-2/section-summary-88
+
+
+5. Working with standard modules
+dir() function
+it is able to reveal all the names provided through a particular module
+There is one condition: the module has to have been previously imported as a whole (i.e., using the import module instruction - from module is not enough).
+
+The function returns an alphabetically sorted list containing all entities' names available in the module identified by a name passed to the function as an argument:
+dir(module)
+
+6. Math functions
+from math import ceil, floor, trunc
+
+x = 1.4
+y = 2.6
+
+print(floor(x), floor(y))
+print(floor(-x), floor(-y))
+print(ceil(x), ceil(y))
+print(ceil(-x), ceil(-y))
+print(trunc(x), trunc(y))
+print(trunc(-x), trunc(-y))
+
+7. Is there real randomness in computers?
+Another module worth mentioning is the one named random
+It delivers some mechanisms allowing you to operate with pseudorandom numbers.
+"pseudo" - they all are calculated using very refined algorithms.
+
+A random number generator takes a value called a seed, treats it as an input value, calculates a "random" number based on it
+and produces a new seed value.
+The length of a cycle in which all seed values are unique may be very long, but it isn't infinite - sooner or later the seed values will start repeating, and the generating values will repeat, too
+
+The initial seed value, set during the program start, determines the order in which the generated values will appear.
+
+The random factor of the process may be augmented by setting the seed with a number taken from the current time - this may ensure that each program launch will start from a different seed value
+
+random() - produces a float number x coming from the range (0.0, 1.0) - in other words: (0.0 <= x < 1.0).
+
+The seed function
+
+The seed() function is able to directly set the generator's seed. We'll show you two of its variants:
+
+seed() - sets the seed with the current time;
+seed(int_value) - sets the seed with the integer value int_value.
+
+!!! Due to the fact that the seed is always set with the same value, the sequence of generated values always looks the same. !!!
+
+
+If you want integer random values, one of the following functions would fit better:
+
+randrange(end)
+randrange(beg, end)
+randrange(beg, end, step)
+randint(left, right)
+
+The last function is an equivalent of randrange(left, right+1) - it generates the integer value i, which falls in the range [left, right] (no exclusion on the right side).
+
+The choice and sample functions
+It's a function named in a very suggestive way - choice:
+
+choice(sequence)
+sample(sequence, elements_to_choose)
+
+Again, the output of the program is not predictable.
+
+
+8. platform module
+The platform module lets you access the underlying platform's data, i.e., hardware, operating system, and interpreter version information.
+
+platform(aliased = False, terse = False)
+aliased → when set to True (or any non-zero value) it may cause the function to present the alternative underlying layer names instead of the common ones;
+terse → when set to True (or any non-zero value) it may convince the function to present a briefer form of the result (if possible)
+
+from platform import platform
+
+print(platform())
+print(platform(1))
+print(platform(0, 1))
+
+Windows-10-10.0.19041-SP0
+Windows-10-10.0.19041-SP0
+Windows-10
+
+9. The machine function
+you may just want to know the generic name of the processor which runs your OS together with Python and your code
+
+from platform import machine
+print(machine())
+>>> AMD64
+
+10. The processor function
+The processor() function returns a string filled with the real processor name (if possible).
+
+from platform import processor
+print(processor())
+>>> Intel64 Family 6 Model 142 Stepping 12, GenuineIntel
+
+11. The system function
+A function named system() returns the generic OS name as a string.
+
+from platform import system
+print(system())
+>>> Windows
+
+12. The version function
+The OS version is provided as a string by the version() function.
+
+from platform import version
+print(version())
+>>> 10.0.19041
+
+13. functions from platform module
+
+python_implementation() → returns a string denoting the Python implementation (expect CPython here, unless you decide to use any non-canonical Python branch)
+
+python_version_tuple() → returns a three-element tuple filled with:
+the major part of Python's version;
+the minor part;
+the patch level number.
+
+from platform import python_implementation, python_version_tuple
+
+print(python_implementation())
+
+for atr in python_version_tuple():
+    print(atr)
+
+>>> CPython
+3
+9
+6
+
+14. Python Module Index
+You can read about all standard Python modules here: https://docs.python.org/3/py-modindex.html.
+
+15. Key takeaways
+
+1. A function named dir() can show you a list of the entities contained inside an imported module. For example:
+
+import os
+dir(os)
+
+
+prints out the list of all the os module's facilities you can use in your code.
+
+
+2. The math module couples more than 50 symbols (functions and constants) that perform mathematical operations (like sine(), pow(), factorial()) or providing important values (like π and the Euler symbol e).
+
+
+3. The random module groups more than 60 entities designed to help you use pseudo-random numbers. Don't forget the prefix "random", as there is no such thing as a real random number when it comes to generating them using the computer's algorithms.
+
+
+4. The platform module contains about 70 functions which let you dive into the underlaying layers of the OS and hardware. Using them allows you to get to know more about the environment in which your code is executed.
+
+
+5. Python Module Index (https://docs.python.org/3/py-modindex.html is a community-driven directory of modules available in the Python universe. If you want to find a module fitting your needs, start your search there.
+
+
+
+Exercise 1
+
+What is the expected value of the result variable after the following code is executed?
+
+import math
+result = math.e == math.exp(1)
+
+
+Check
+True
+
+Exercise 2
+
+(Complete the sentence) Setting the generator's seed with the same value each time your program is run guarantees that...
+
+Check
+... the pseudo-random values emitted from the random module will be exactly the same.
+
+
+
+Exercise 3
+
+Which of the platform module's functions will you use to determine the name of the CPU running inside your computer?
+
+Check
+The processor() function
+
+
+
+Exercise 4
+
+What is the expected output of the following snippet?
+
+import platform
+
+print(len(platform.python_version_tuple()))
+
+
+Check
+3
+
+16. What is a package?
+making many modules may cause a little mess - sooner or later you'll want to group your modules exactly in the same way as you've previously grouped functions - is there a more general container than a module?
+yes, there is - it's a package; in the world of modules, a package plays a similar role to a folder/directory in the world of files.
+
+A new subfolder has appeared - can you see it? Its name is __pycache__
+There is a file named (more or less) module.cpython-xy.pyc where x and y are digits derived from your version of Python
+When Python imports a module for the first time, it translates its contents into a somewhat compiled shape.
+The file doesn't contain machine code - it's internal Python semi-compiled code,  ready to be executed by Python's interpreter
+the execution starts faster, and runs faster, too.
+
+Thanks to that, every subsequent import will go quicker than interpreting the source text from scratch.
+
+Python is able to check if the module's source file has been modified (in this case, the pyc file will be rebuilt) or not (when the pyc file may be run at once). As this process is fully automatic and transparent, you don't have to keep it in mind.
+
+When a module is imported, its content is implicitly executed by Python
+Note: the initialization takes place only once, when the first import occurs, so the assignments done by the module aren't repeated unnecessarily.
+
+Imagine the following context:
+
+there is a module named mod1;
+there is a module named mod2 which contains the import mod1 instruction;
+there is a main file containing the import mod1 and import mod2 instructions.
+At first glance, you may think that mod1 will be imported twice - fortunately, only the first import occurs. Python remembers the imported modules and silently omits all subsequent imports.
+
+Python can do much more. It also creates a variable called __name__.
+We can say that:
+
+when you run a file directly, its __name__ variable is set to __main__;
+when a file is imported as a module, its __name__ variable is set to the file's name (excluding .py)
+
+A few elements need some explanation, we think:
+
+the line starting with #! has many names - it may be called shabang, shebang, hashbang, poundbang or even hashpling (don't ask us why). The name itself means nothing here - its role is more important. From Python's point of view, it's just a comment as it starts with #. For Unix and Unix-like OSs (including MacOS) such a line instructs the OS how to execute the contents of the file (in other words, what program needs to be launched to interpret the text). In some environments (especially those connected with web servers) the absence of that line will cause trouble;
+a string (maybe a multiline) placed before any module instructions (including imports) is called the doc-string, and should briefly explain the purpose and contents of the module;
+the functions defined inside the module (suml() and prodl()) are available for import;
+we've used the __name__ variable to detect when the file is run stand-alone, and seized this opportunity to perform some simple tests.
+
+https://edube.org/learn/pe-2/modules-and-packages-34
 
 
 
