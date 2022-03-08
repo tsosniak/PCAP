@@ -458,6 +458,223 @@ we've used the __name__ variable to detect when the file is run stand-alone, and
 https://edube.org/learn/pe-2/modules-and-packages-34
 
 
+17. how Python searches for modules?
+from sys import path
+
+There's a special variable (actually a list) storing all locations (folders/directories) that are searched in order to find a module which has been requested by the import instruction.
+Python browses these folders in the order in which they are listed in the list - if the module cannot be found in any of these directories, the import fails.
+
+The variable is named path, and it's accessible through the module named sys
+
+Note: the folder in which the execution starts is listed in the first path's element
+
+Note once again: there is a zip file listed as one of the path's elements - it's not an error. Python is able to treat zip files as ordinary folders - this can save lots of storage.
+
+There are two questions to answer:
+how do you transform such a tree (actually, a subtree) into a real Python package (in other words, how do you convince Python that such a tree is not just a bunch of junk files, but a set of modules)?
+where do you put the subtree to make it accessible to Python?
+
+The first question has a surprising answer: packages, like modules, may require initialization.
+Python expects that there is a file with a very unique name inside the package's folder: __init__.py.
+The content of the file is executed when any of the package's modules is imported. If you don't want any special initializations, you can leave the file empty, but you mustn't omit it.
+
+Remember: the presence of the __init.py__ file finally makes up the package.
+
+Note: it's not only the root folder that can contain __init.py__ file - you can put it inside any of its subfolders (subpackages) too
+ It may be useful if some of the subpackages require individual treatment and special kinds of initialization.
+
+sample - you can import modules's entities from .zip file too:
+from sys import path
+path.append('..\\packages\\extrapack.zip')
+import extra.good.best.sigma as sig
+
+
+18. Key takeaways
+
+1. While a module is designed to couple together some related entities (functions, variables, constants, etc.), a package is a container which enables the coupling of several related modules under one common name. Such a container can be distributed as-is (as a batch of files deployed in a directory sub-tree) or it can be packed inside a zip file.
+
+
+2. During the very first import of the actual module, Python translates its source code into the semi-compiled format stored inside the pyc files, and deploys these files into the __pycache__ directory located in the module's home directory.
+
+
+3. If you want to instruct your module's user that a particular entity should be treated as private (i.e. not to be explicitly used outside the module) you can mark its name with either the _ or __ prefix. Don't forget that this is only a recommendation, not an order.
+
+
+4. The names shabang, shebang, hasbang, poundbang, and hashpling describe the digraph written as #!, used to instruct Unix-like OSs how the Python source file should be launched. This convention has no effect under MS Windows.
+
+
+5. If you want convince Python that it should take into account a non-standard package's directory, its name needs to be inserted/appended into/to the import directory list stored in the path variable contained in the sys module.
+
+
+6. A Python file named __init__.py is implicitly run when a package containing it is subject to import, and is used to initialize a package and/or its sub-packages (if any). The file may be empty, but must not be absent.
+
+
+
+Exercise 1
+
+You want to prevent your module's user from running your code as an ordinary script. How will you achieve such an effect?
+
+Check
+import sys
+
+if __name__ == "__main__":
+    print "Don't do that!"
+    sys.exit()
+
+
+
+Exercise 2
+
+Some additional and necessary packages are stored inside the D:\Python\Project\Modules directory. Write a code ensuring that the directory is traversed by Python in order to find all requested modules.
+
+Check
+import sys
+
+# note the double backslashes!
+sys.path.append("D:\\Python\\Project\\Modules")
+
+
+
+
+Exercise 3
+
+The directory mentioned in the previous exercise contains a sub-tree of the following structure:
+
+abc
+ |__ def
+      |__ mymodule.py
+
+
+Assuming that D:\Python\Project\Modules has been successfully appended to the sys.path list, write an import directive letting you use all the mymodule entities.
+
+Check
+import abc.def.mymodule
+
+
+19. Python packaging ecosystem and how to use it
+ Python has turned into a leader of research on artificial intelligence
+ The most preferable and efficient thing is to enable all Python community members to freely exchange their codes and experiences
+ In this model, nobody is forced to start work from scratch
+
+ a centralized repository of all available software packages; and a tool allowing users to access the repository. Both these entities already exist and can be used at any time.
+The repository (or repo for short) we mentioned before is named PyPI (it's short for Python Package Index)
+
+The PyPI website (administered by PWG) is located at the address:
+https://pypi.org/.
+
+PyPI is completely free, and you can just pick a code and use it
+
+pip - means “pip installs packages”
+
+The MS Windows Python installer already contains pip
+pip --version
+pip3 --version
+
+the absence of this message may mean that the PATH variable either incorrectly points to the location of the Python binaries, or doesn't point to it at all; for example, our PATH variable contains the following substring:
+
+C:\Program Files\Python3\Scripts\;C:\Program Files\Python3\;
+
+
+20. Dependencies
+dependency is a phenomenon that appears every time you're going to use a piece of software that relies on other software
+
+dependency hell.
+pip can do all of this for you. Really. It can discover, identify, and resolve all dependencies. Moreover, it can do it in the cleverest way, avoiding any unnecessary downloads and reinstalls.
+
+pip help
+
+there’s a command that can tell you more about any of the installed packages
+pip show package_name
+
+Installation: Two possible scenarios may be put into action now:
+you want to install a new package for you only – it won't be available for any other user (account) existing on your computer; this procedure is the only one available if you can’t elevate your permissions and act as a system administrator;
+you’ve decided to install a new package system-wide – you have administrative rights and you're not afraid to use them.
+
+To distinguish between these two actions, pip uses a dedicated option named --user (note the double dash). The presence of this option instructs pip to act locally on behalf of your (non-administrative) user.
+If you don’t add this, pip assumes that you’re as a system administrator and it’ll do nothing to correct you if you’re not.
+
+The pip install has two important additional abilities:
+
+it is able to update a locally installed package – e.g., if you want to make sure that you’re using the latest version of a particular package, you can run the following command:
+
+pip install -U package_name
+
+it is able to install a user-selected version of a package (pip installs the newest available version by default); to achieve this goal you should use the following syntax:
+
+pip install package_name==package_version
+e.g.,
+
+pip install pygame==1.9.2
+
+
+21. Key takeaways
+
+1. A repository (or repo for short) designed to collect and share free Python code exists and works under the name Python Package Index (PyPI) although it's also likely that you come across a very niche name The Cheese Shop. The Shop's website is available at https://pypi.org/.
+
+
+2. To make use of The Cheese Shop the specialized tool has been created and its name is pip (pip installs packages while pip stands for... ok, don't mind). As pip may not be deployed as a part of standard Python installation, it is possible that you will need to install it manually. Pip is a console tool.
+
+
+3. To check pip's version one the following commands should be issued:
+
+pip --version
+
+
+or
+
+pip3 --version
+
+
+Check yourself which of these works for you in your OS' environment.
+
+
+4. List of main pip activities looks as follows:
+
+pip help operation - shows brief pip's description;
+pip list - shows list of currently installed packages;
+pip show package_name - shows package_name info including package's dependencies;
+pip search anystring - searches through PyPI directories in order to find packages which name contains anystring;
+pip install name - installs name system-wide (expect problems when you don't have administrative rights);
+pip install --user name - install name for you only; no other your platform's user will be able to use it;
+pip install -U name - updates previously installed package;
+pip uninstall name - uninstalls previously installed package;
+
+Exercise 1
+
+Where does the name "The Cheese Shop" come from?
+
+Check
+
+Exercise 2
+
+Why should I ensure which one of pip and pip3 works for me?
+
+Check
+
+Exercise 3
+
+How can I determine if my pip works with either Python 2 or Python 3?
+
+Check
+
+Exercise 4
+
+Unfortunately, I don't have administrative right. What should I do to install a package system-wide?
+
+Check
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
