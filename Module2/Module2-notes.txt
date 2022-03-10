@@ -280,6 +280,173 @@ bcd
 https://edube.org/learn/pe-2/section-summary-93
 
 
+19. The capitalize() method
+ it creates a new string filled with characters taken from the source string
+if the first character inside the string is a letter (note: the first character is an element with an index equal to 0, not just the first visible character), it will be converted to upper-case;
+all remaining letters from the string will be converted to lower-case.
+
+the original string (from which the method is invoked) is not changed !!!
+the modified (capitalized in this case) string is returned as a result
+
+print("Alpha".capitalize())
+print('ALPHA'.capitalize())
+print(' Alpha'.capitalize())
+print('123'.capitalize())
+print("αβγδ".capitalize())
+
+Returns:
+Alpha
+Alpha
+ alpha
+123
+Αβγδ
+
+
+20. The center() method
+method makes a copy of the original string trying to center it inside a field of a specified width.
+The centering is actually done by adding some spaces before and after the string.
+
+If the target field's length is too small to fit the string, the original string is returned.
+
+print('[' + 'Beta'.center(2) + ']')
+print('[' + 'Beta'.center(4) + ']')
+print('[' + 'Beta'.center(6) + ']')
+
+[Beta]
+[Beta]
+[ Beta ]
+
+The two-parameter variant of center() makes use of the character from the second argument, instead of a space.
+print('[' + 'gamma'.center(20, '*') + ']')
+[*******gamma********]
+
+
+21. The endswith() method
+checks if the given string ends with the specified argument and returns True or False
+t = "zeta"
+print(t.endswith("a"))
+print(t.endswith("A"))
+print(t.endswith("et"))
+print(t.endswith("eta"))
+
+Returns:
+True
+False
+False
+True
+
+22. The find() method
+is similar to index() -  - it looks for a substring and returns the index of first occurrence of this substring
+it's safer - it doesn't generate an error for an argument containing a non-existent substring
+!!!! it works with strings only !!!!
+
+print("Eta".find("ta"))
+print("Eta".find("mma"))
+1
+-1
+
+Note: don't use find() if you only want to check if a single character occurs within a string - the in operator will be significantly faster.
+
+two-parameter variant of the find() method - The second argument specifies the index at which the search will be started
+print('kappa'.find('a', 2)) >>> 4
+print('kappa'.find('a', 1)) >>> 1
+
+three-parameter mutation of the find() method - third arg is actually the upper limit of the search
+print('kappa'.find('a', 1, 4))
+print('kappa'.find('a', 2, 4))
+1
+-1
+
+
+23. The isalnum() method
+parameterless method named isalnum() checks if the string contains only digits or alphabetical characters (letters), and returns True or False
+
+print('lambda30'.isalnum())
+print('lambda'.isalnum())
+print('30'.isalnum())
+print('@'.isalnum())
+print('lambda_30'.isalnum())
+print(''.isalnum())
+True
+True
+True
+False
+False
+False
+
+
+24. The isalpha() method
+it's interested in letters only.
+
+25. The isdigit() method
+method looks at digits only -
+
+26. The islower() method
+it accepts lower-case letters only.
+
+print("Moooo".islower())
+print('moooo'.islower())
+False
+True
+
+27. The isspace() method
+identifies whitespaces only
+
+print(' \n '.isspace())
+print(" ".isspace())
+print("mooo mooo mooo".isspace())
+
+True
+True
+False
+
+28. The isupper() method
+it concentrates on upper-case letters only.
+
+print("Moooo".isupper())
+print('moooo'.isupper())
+print('MOOOO'.isupper())
+
+False
+False
+True
+
+29. The join() method
+performs a join - it expects one argument as a list;
+!!! it must be assured that all the list's elements are strings !!! - the method will raise a TypeError exception otherwise;
+
+all the list's elements will be joined into one string but...
+...the string from which the method has been invoked is used as a separator, put among the strings;
+the newly created string is returned as a result.
+
+print(",".join(["omicron", "pi", "rho"]))
+omicron,pi,rh
+
+30.The lower() method
+makes a copy of a source string, replaces all upper-case letters with their lower-case counterparts, and returns the string as the result
+the source string remains untouched.
+
+Note: The lower() method doesn't take any parameters.
+print("SiGmA=60".lower()) >>> sigma=60
+
+
+31. The lstrip() method
+https://edube.org/learn/pe-2/string-methods-58
+
+parameterless lstrip() method returns a newly created string formed from the original one by removing all leading whitespaces.
+print("[" + " tau ".lstrip() + "]") >>> [tau ]
+
+one-parameter lstrip() method does the same as its parameterless version, but removes all characters enlisted
+in its argument (a string), not just whitespaces:
+print("www.cisco.com".lstrip("w.")) >>> cisco.com
+
+print("pythoninstitute.org".lstrip(".org")) >>> pythoninstitute.org
+!!! Leading characters, leading whitespaces !!!
+
+
+32. The replace() method
+
+
 
 
 
