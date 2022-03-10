@@ -1,2 +1,309 @@
 https://edube.org/learn/pe-2/python-essentials-2-module-2-1
 
+1. How computers understand single characters?
+Computers store characters as numbers.
+Every character used by a computer corresponds to a unique number, and vice versa.
+
+Some of these characters are called whitespaces, while others are named control characters, because their purpose is to control input/output devices.
+
+ASCII (short for American Standard Code for Information Interchange)
+The code provides space for 256 different characters
+
+
+2. I18N, Code points and code pages
+It was necessary to come up with something more flexible and capacious than ASCII
+The word internationalization is commonly shortened to I18N.
+
+The software I18N is a standard in present times. Each program has to be written in a way that enables it to be used all around the world, among different cultures, languages and alphabets.
+
+A classic form of ASCII code uses eight bits for each sign - Eight bits mean 256 different characters.
+
+Code points and code pages:
+A code point is a number which makes a character. For example, 32 is a code point which makes a space in ASCII encoding
+
+As standard ASCII occupies 128 out of 256 possible code points, you can only make use of the remaining 128.
+Can you set the higher half of the code points differently for different languages?
+-Yes, you can. Such a concept is called a code page.
+
+A code page is a standard for using the upper 128 code points to store specific national characters.
+For example, the code point 200 makes Č (a letter used by some Slavic languages) when utilized by the ISO/IEC 8859-2 code page
+
+In consequence, to determine the meaning of a specific code point, you have to know the target code page.
+
+
+3. Unicode
+Code pages helped the computer industry to solve I18N issues for some time, but it soon turned out that they would not be a permanent solution.
+The concept that solved the problem in the long term was Unicode.
+
+Unicode assigns unique (unambiguous) characters (letters, hyphens, ideograms, etc.) to more than a million code points.
+
+The first 128 Unicode code points are identical to ASCII, and the first 256 Unicode code points are identical to the ISO/IEC 8859-1 code page (a code page designed for western European languages).
+
+The Unicode standard says nothing about how to code and store the characters in the memory and files. It only names all available characters and assigns them to planes - (a group of characters of similar origin, application, or nature).
+!!!to implement Unicode in actual computers and computer storage systems!!! we need something more like UCS-4. - UCS-4: Universal Character Set.
+UCS-4 uses 32 bits (four bytes) to store each character
+As you can see, UCS-4 is a rather wasteful standard - it increases a text's size by four times compared to standard ASCII. Fortunately, there are smarter forms of encoding Unicode texts.
+
+Another implementation for UNICODE is UTF-8 : Unicode Transformation Format.
+UTF-8 uses as many bits for each of the code points as it really needs to represent them
+
+Python 3 fully supports Unicode and UTF-8
+you can use Unicode/UTF-8 encoded characters to name variables and other entities;
+you can use them during all input and output.
+This means that Python3 is completely I18Ned.
+
+
+4. Key takeaways
+
+1. Computers store characters as numbers. There is more than one possible way of encoding characters, but only some of them gained worldwide popularity and are commonly used in IT: these are ASCII (used mainly to encode the Latin alphabet and some of its derivates) and UNICODE (able to encode virtually all alphabets being used by humans).
+
+
+2. A number corresponding to a particular character is called a codepoint.
+
+
+3. UNICODE uses different ways of encoding when it comes to storing the characters using files or computer memory: two of them are UCS-4 and UTF-8 (the latter is the most common as it wastes less memory space).
+
+
+Exercise 1
+
+What is BOM?
+
+Check
+BOM (Byte Order Mark) is a special combination of bits announcing encoding used by a file's content (eg. UCS-4 or UTF-B).
+
+
+Exercise 2
+
+Is Python 3 I18Ned?
+
+Check
+Yes, it's completely internationalized - we can use UNICODE characters inside our code, read them from input and send to output.
+
+
+
+6. Strings - a brief review
+are immutable sequences.
+Don't forget that a backslash (\) used as an escape character is not included in the string's total length
+i_am = 'I\'m'
+print(len(i_am)) >>> 3
+
+Multiline strings
+ the string starts with three apostrophes, not one.
+
+multiline = '''Line #1
+Line #2'''
+print(len(multiline)) >>> 15
+The missing character is simply invisible - it's a whitespace - denoted as \n - It's a special (control) character used to force a line feed (hence its name: LF)
+
+7. Operations on strings
+can be:
+concatenated (joined)
+replicated.
+
+The ability to use the same operator against completely different kinds of data (like numbers vs. strings) is called overloading
+
+Note: shortcut variants of the above operators are also applicable for strings (+= and *=).
+
+
+8. Operations on strings: ord()
+If you want to know a specific character's ASCII/UNICODE code point value
+The function needs a one-character string as its argument - breaching this requirement causes a TypeError
+
+ord('a') >>> 97
+ord('ę') >>> 281
+
+9. Operations on strings: chr()
+If you know the code point (number) and want to get the corresponding character
+The function takes a code point and returns its character.
+Invoking it with an invalid argument (e.g., a negative or invalid code point) causes ValueError or TypeError exceptions.
+
+chr(ord(x)) == x
+ord(chr(x)) == x
+
+chr(97) >>> 'a'
+
+
+10. Strings as sequences: indexing
+Python strings are sequences
+you can treat them like lists in many particular cases.
+if you want to access any of a string's characters, you can do it using indexing
+
+Strings as sequences: iterating
+Iterating through the strings works, too
+
+11. Slices in string
+slices is still usable.
+
+alpha = "abdefg"
+print(alpha[-3:4]) >>> 'e'
+
+
+12. The in and not in operators
+The result of the check is simply True or False.
+
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+print("ghi" in alphabet) >>> True
+print("Xyz" in alphabet) >>> False
+
+
+13. Python strings are immutable
+doesn't allow you to use the del instruction to remove anything from a string.
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+del alphabet[0] >>> TypeError: 'str' object doesn't support item deletion
+
+!!!The only thing you can do with del and a string is to remove the string as a whole!!!
+del alphabet
+
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+alphabet.append("A") >>> AttributeError: 'str' object has no attribute 'append'
+
+creating a new copy of a string each time you modify its contents:
+alphabet = "bcdefghijklmnopqrstuvwxy"
+alphabet = "a" + alphabet // no error - new string created
+
+
+14. Operations on strings: min() and max()
+min: finds the minimum element of the sequence passed as an argument.
+max: finds the maximum element of the sequence.
+min("aAbByYzZ") >>> 'A'
+
+15. Operations on strings: the index() method
+searches the sequence from the beginning, in order to find the first element of the value specified in its argument.
+element searched for must occur in the sequence - its absence will cause a ValueError exception!!!
+method returns the index of the first occurrence of the argument
+"aAbByYzZaA".index("b") >>> 2
+
+16. Operations on strings: the list() function
+The list() function takes its argument (a string) and creates a new list containing all the string's characters, one per list element.
+list() is able to create a new list from many other entities (e.g., from tuples and dictionaries).
+
+list("abcabc") >>> ['a', 'b', 'c', 'a', 'b', 'c']
+
+17. Operations on strings: the count() method
+counts all occurrences of the element inside the sequence.
+The absence of such elements doesn't cause any problems.
+'abcabc'.count("d") >>> 0
+
+https://docs.python.org/3.4/library/stdtypes.html#string-methods.
+
+18. Key takeaways
+
+1. Python strings are immutable sequences and can be indexed, sliced, and iterated like any other sequence, as well as being subject to the in and not in operators. There are two kinds of strings in Python:
+
+one-line strings, which cannot cross line boundaries – we denote them using either apostrophes ('string') or quotes ("string")
+multi-line strings, which occupy more than one line of source code, delimited by trigraphs:
+
+'''
+string
+'''
+
+
+or
+
+"""
+string
+"""
+
+
+2. The length of a string is determined by the len() function. The escape character (\) is not counted. For example:
+
+print(len("\n\n"))
+
+
+outputs 2.
+
+
+3. Strings can be concatenated using the + operator, and replicated using the * operator. For example:
+
+asterisk = '*'
+plus = "+"
+decoration = (asterisk + plus) * 4 + asterisk
+print(decoration)
+
+
+outputs *+*+*+*+*.
+
+
+4. The pair of functions chr() and ord() can be used to create a character using its codepoint, and to determine a codepoint corresponding to a character. Both of the following expressions are always true:
+
+chr(ord(character)) == character
+ord(chr(codepoint)) == codepoint
+
+
+5. Some other functions that can be applied to strings are:
+
+list() – create a list consisting of all the string's characters;
+max() – finds the character with the maximal codepoint;
+min() – finds the character with the minimal codepoint.
+
+6. The method named index() finds the index of a given substring inside the string.
+
+
+Exercise 1
+
+What is the length of the following string assuming there is no whitespaces between the quotes?
+
+"""
+"""
+
+
+Check
+1
+
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+s = 'yesteryears'
+the_list = list(s)
+print(the_list[3:6])
+
+
+Check
+['t', 'e', 'r']
+
+
+
+Exercise 3
+
+What is the expected output of the following code?
+
+for ch in "abc":
+    print(chr(ord(ch) + 1), end='')
+
+
+Check
+bcd
+
+https://edube.org/learn/pe-2/section-summary-93
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
