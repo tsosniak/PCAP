@@ -445,6 +445,185 @@ print("pythoninstitute.org".lstrip(".org")) >>> pythoninstitute.org
 
 
 32. The replace() method
+two-parameter replace() method returns a copy of the original string in which all occurrences of the first argument have been replaced by the second argument.
+
+print("www.netacad.com".replace("netacad.com", "pythoninstitute.org"))
+print("This is it!".replace("is", "are"))
+print("Apple juice".replace("juice", ""))
+www.pythoninstitute.org
+Thare are it!
+Apple
+
+ three-parameter replace() variant uses the third argument (a number) to limit the number of replacements.
+print("This is it!".replace("is", "are", 1))
+Thare is it!
+
+
+33. The rfind() method
+The one-, two-, and three-parameter methods named rfind()
+
+print("tau tau tau".rfind("ta"))
+print("tau tau tau".rfind("ta", 9))
+print("tau tau tau".rfind("ta", 3, 9))
+8
+-1
+4
+
+34. The rstrip() method
+print("[" + " upsilon ".rstrip() + "]")
+print("cisco.com".rstrip(".com"))
+[ upsilon]
+cis
+
+35. The split() method
+it splits the string and builds a list of all detected substrings.
+The method assumes that the substrings are delimited by whitespaces
+If the string is empty, the resulting list is empty too.
+
+Note: the reverse operation can be performed by the join() method.
+
+print("phi       chi\npsi".split())
+print("".split())
+['phi', 'chi', 'psi']
+[]
+
+https://edube.org/learn/pe-2/string-methods-62
+
+35. The startswith() method
+startswith() method is a mirror reflection of endswith() - it checks if a given string starts with the specified substring.
+
+print("omega".startswith("meg"))
+print("omega".startswith("om"))
+False
+True
+
+36. The strip() method
+method combines the effects caused by rstrip() and lstrip() - it makes a new string lacking all the leading and trailing whitespaces.
+
+s = 'www.tsosniawk.pl'
+s.strip('w.pl')
+>>> 'tsosniawk'
+
+37. The swapcase() method
+method makes a new string by swapping the case of all letters within the source string: lower-case characters become upper-case, and vice versa.
+All other characters remain untouched.
+
+print("I know that I know nothing.".swapcase())
+i KNOW THAT i KNOW NOTHING.
+
+38. The title() method
+changes every word's first letter to upper-case, turning all other ones to lower-case.
+
+print("I know that I know nothing. Part 1.".title())
+I Know That I Know Nothing. Part 1.
+
+s = 'www.tsosniawk.pl'
+s.title()
+>>> 'Www.Tsosniawk.Pl'
+
+
+39. The upper() method
+makes a copy of the source string, replaces all lower-case letters with their upper-case counterparts, and returns the string as the result.
+
+print("I know that I know nothing. Part 2.".upper())
+I KNOW THAT I KNOW NOTHING. PART 2.
+
+
+40. Key takeaways
+
+1. Some of the methods offered by strings are:
+
+capitalize() – changes all string letters to capitals;
+center() – centers the string inside the field of a known length;
+count() – counts the occurrences of a given character;
+join() – joins all items of a tuple/list into one string;
+lower() – converts all the string's letters into lower-case letters;
+lstrip() – removes the white characters from the beginning of the string;
+replace() – replaces a given substring with another;
+rfind() – finds a substring starting from the end of the string;
+rstrip() – removes the trailing white spaces from the end of the string;
+split() – splits the string into a substring using a given delimiter;
+strip() – removes the leading and trailing white spaces;
+swapcase() – swaps the letters' cases (lower to upper and vice versa)
+title() – makes the first letter in each word upper-case;
+upper() – converts all the string's letter into upper-case letters.
+
+2. String content can be determined using the following methods (all of them return Boolean values):
+
+endswith() – does the string end with a given substring?
+isalnum() – does the string consist only of letters and digits?
+isalpha() – does the string consist only of letters?
+islower() – does the string consists only of lower-case letters?
+isspace() – does the string consists only of white spaces?
+isupper() – does the string consists only of upper-case letters?
+startswith() – does the string begin with a given substring?
+
+
+
+Exercise 1
+
+What is the expected output of the following code?
+
+for ch in "abc123XYX":
+    if ch.isupper():
+        print(ch.lower(), end='')
+    elif ch.islower():
+        print(ch.upper(), end='')
+    else:
+        print(ch, end='')
+
+
+Check
+ABC123xyz
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+s1 = 'Where are the snows of yesteryear?'
+s2 = s1.split()
+print(s2[-2])
+
+
+Check
+of
+
+
+Exercise 3
+
+What is the expected output of the following code?
+
+the_list = ['Where', 'are', 'the', 'snows?']
+s = '*'.join(the_list)
+print(s)
+
+
+Check
+Where*are*the*snows?
+
+
+Exercise 4
+
+What is the expected output of the following code?
+
+s = 'It is either easy or impossible'
+s = s.replace('easy', 'hard').replace('im', '')
+print(s)
+
+
+Check
+It is either hard or possible
+
+
+41. Comparing strings
+https://edube.org/learn/pe-2/string-in-action-12
+
+
+
+
+
+
 
 
 
