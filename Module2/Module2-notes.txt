@@ -619,8 +619,566 @@ It is either hard or possible
 41. Comparing strings
 https://edube.org/learn/pe-2/string-in-action-12
 
+can be compared using the same set of operators which are in use in relation to numbers.
+==
+!=
+>
+>=
+<
+<=
+
+it just compares code point values, character by character.
+
+Two strings are equal when they consist of the same characters in the same order.
+
+The final relation between strings is determined by comparing the first different character in both strings
+(keep ASCII/UNICODE code points in mind at all times.)
+
+When you compare two strings of different lengths and the shorter one is identical to the longer one's beginning,
+the longer string is considered greater.
+'alpha' < 'alphabet'
+>>> True
+
+if a string contains digits only, it's still not a number
+'20' < '8'
+>>> True
+
+Comparing strings against numbers is generally a bad idea.
+!!!The only comparisons you can perform: == and != operators.!!!
+!!!Using any of the remaining comparison operators will raise a TypeError exception.!!!
+
+'10' == 10
+'10' != 10
+'10' == 1
+'10' != 1
+'10' > 10
+False
+True
+False
+True
+TypeError exception
+
+42. Sorting: sorted() , data.sort()
+Comparing is closely related to sorting (or rather, sorting is in fact a very sophisticated case of comparing).
+
+Let's assume that you want to sort the following list:
+ greek = ['omega', 'alpha', 'pi', 'gamma']
+
+a function named sorted() - takes one argument (a list) and returns a new list, filled with the sorted argument's elements
+
+The original list remains untouched.
+['omega', 'alpha', 'pi', 'gamma']
+['alpha', 'gamma', 'omega', 'pi']
+
+The second method affects the list itself - no new list is created. Ordering is performed in situ by the method named sort().
+
+If you need an order other than non-descending, you have to convince the function/method to change its default behaviors.
+
+43. Strings vs. numbers
+how to convert a number (an integer or a float) into a string, and vice versa.
+
+The number-string conversion is simple, as it is always possible.
+It's done by a function named str()
+
+The reverse transformation (string-number) is possible when and only when the string represents a valid number.
+!!!If the condition is not met, expect a ValueError exception.!!!
+
+Use the int() function if you want to get an integer, and float() if you need a floating-point value.
+
+43. Key takeaways
+
+1. Strings can be compared to strings using general comparison operators, but comparing them to numbers gives no reasonable result, because no string can be equal to any number. For example:
+
+string == number is always False;
+string != number is always True;
+string >= number always raises an exception.
+
+2. Sorting lists of strings can be done by:
+
+a function named sorted(), creating a new, sorted list;
+a method named sort(), which sorts the list in situ
+
+3. A number can be converted to a string using the str() function.
+
+4. A string can be converted to a number (although not every string) using either the int() or float() function. The conversion fails if a string doesn't contain a valid number image (an exception is raised then).
 
 
+
+
+Exercise 1
+
+Which of the following lines describe a true condition?
+
+'smith' > 'Smith'
+
+'Smiths' < 'Smith'
+
+'Smith' > '1000'
+
+'11' < '8'
+
+
+
+Check
+1, 3 and 4
+
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+s1 = 'Where are the snows of yesteryear?'
+s2 = s1.split()
+s3 = sorted(s2)
+print(s3[1])
+
+
+Check
+are
+
+
+
+Exercise 3
+
+What is the expected result of the following code?
+
+s1 = '12.8'
+i = int(s1)
+s2 = str(i)
+f = float(s2)
+print(s1 == s2)
+
+
+Check
+The code raises a ValueError exception
+
+44. Key takeaways
+
+1. Strings are key tools in modern data processing, as most useful data are actually strings. For example, using a web search engine (which seems quite trivial these days) utilizes extremely complex and complicated string processing, involving unimaginable amounts of data.
+
+2. Comparing strings in a strict way (as Python does) can be very unsatisfactory when it comes to advanced searches (e.g. during extensive database queries). Responding to this demand, a number of fuzzy string comparison algorithms has been created and implemented. These algorithms are able to find strings which aren't equal in the Python sense, but are similar.
+
+One such concept is the Hamming distance, which is used to determine the similarity of two strings. If this problem interests you, you can find out more about it here: https://en.wikipedia.org/wiki/Hamming_distance. Another solution of the same kind, but based on a different assumption, is the Levenshtein distance described here: https://en.wikipedia.org/wiki/Levenshtein_distance.
+
+
+
+
+3. Another way of comparing strings is finding their acoustic similarity, which means a process leading to determine if two strings sound similar (like "raise" and "race"). Such a similarity has to be established for every language (or even dialect) separately.
+
+An algorithm used to perform such a comparison for the English language is called Soundex and was invented – you won't believe – in 1918. You can find out more about it here: https://en.wikipedia.org/wiki/Soundex.
+
+
+4. Due to limited native float and integer data precision, it's sometimes reasonable to store and process huge numeric values as strings. This is the technique Python uses when you force it to operate on an integer number consisting of a very large number of digits.
+
+
+45. Errors, failures, and other plagues
+Anything that can go wrong, will go wrong. - Murphy's law
+
+Your code's execution can go wrong, too. If it can, it will.
+
+Can you protect yourself from such surprises? Of course you can. Moreover, you have to do it in order to be considered a good programmer.
+
+
+46. Exceptions
+Each time your code tries to do something wrong/foolish/irresponsible/crazy/unenforceable, Python does two things:
+it stops your program;
+it creates a special kind of data, called an exception.
+
+Both of these activities are called raising an exception. -when it has no idea what to do with your code.
+
+ValueError, ZeroDivisionError, IndexError
+
+How do you handle exceptions?
+The word try is key to the solution.
+
+!!!The recipe for success is as follows:!!!
+first, you have to try to do something;
+next, you have to check whether everything went well.
+
+!!!But wouldn't it be better to check all circumstances first and then do something only if it's safe?!!!
+Admittedly, this way may seem to be the most natural and understandable, but in reality,
+this method doesn't make programming any easier. All these checks can make your code bloated and illegible.
+
+Python prefers a completely different approach. (the first one: try.. catch..)
+
+
+47. Exception continued
+the try keyword begins a block of the code which may or may not be performing correctly;
+next, Python tries to perform the risky action; if it fails, an exception is raised and Python starts to look for a solution;
+the except keyword starts a piece of code which will be executed if anything inside the try block goes wrong
+- if an exception is raised inside a previous try block, it will fail here, so the code located after the except keyword
+should provide an adequate reaction to the raised exception;
+returning to the previous nesting level ends the try-except section.
+
+try:
+    :
+except exc1:
+    :
+except exc2:
+    :
+except:
+    :
+
+
+try:
+    x = int(input("Enter a number: "))
+    y = 1 / x
+except:
+    print("Oh dear, something went wrong...")
+
+print("THE END.")
+
+Don't forget that:
+
+the except branches are searched in the same order in which they appear in the code;
+you must not use more than one except branch with a certain exception name;
+the number of different except branches is arbitrary - the only condition is that if you use try, you must put at least one except (named or not) after it;
+the except keyword must not be used without a preceding try;
+if any of the except branches is executed, no other branches will be visited;
+if none of the specified except branches matches the raised exception, the exception remains unhandled (we'll discuss it soon)
+if an unnamed except branch exists (one without an exception name), it has to be specified as the last.
+
+48. Key takeaways
+
+1. An exception is an event in a program execution's life caused by an abnormal situation. The exception should he handled to avoid program termination. The part of your code that is suspected of being the source of the exception should be put inside the try branch.
+
+When the exception happens, the execution of the code is not terminated, but instead jumps into the except branch. This is the place where the handling of the exception should take place. The general scheme for such a construction looks as follows:
+
+:
+# The code that always runs smoothly.
+:
+try:
+    :
+    # Risky code.
+    :
+except:
+    :
+    # Crisis management takes place here.
+    :
+:
+# Back to normal.
+:
+
+
+2. If you need to handle more than one exception coming from the same try branch ,you can add more than one except branch, but you have to label them with different exception names, like this:
+
+:
+# The code that always runs smoothly.
+:
+try:
+    :
+    # Risky code.
+    :
+except Except_1:
+    # Crisis management takes place here.
+except Except_2:
+    # We save the world here.
+:
+# Back to normal.
+:
+
+
+At most, one of the except branches is executed – none of the branches is performed when the raised exception doesn't match to the specified exceptions.
+
+
+3. You cannot add more than one anonymous (unnamed) except branch after the named ones.
+
+:
+# The code that always runs smoothly.
+:
+try:
+    :
+    # Risky code.
+    :
+except Except_1:
+    # Crisis management takes place here.
+except Except_2:
+    # We save the world here.
+except:
+    # All other issues fall here.
+:
+# Back to normal.
+:
+
+
+
+Exercise 1
+
+What is the expected output of the following code?
+
+try:
+    print("Let's try to do this")
+    print("#"[2])
+    print("We succeeded!")
+except:
+    print("We failed")
+print("We're done")
+
+
+Check
+Let's try to do this
+We failed
+We're done
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+try:
+    print("alpha"[1/0])
+except ZeroDivisionError:
+    print("zero")
+except IndexingError:
+    print("index")
+except:
+    print("some")
+
+
+Check
+zero
+
+49. Exceptions
+Python 3 defines 63 built-in exceptions, and all of them form a tree-shaped hierarchy
+We can say that the closer to the root an exception is located, the more general (abstract) it is
+
+https://edube.org/learn/pe-2/the-anatomy-of-exceptions-12
+
+Note:
+
+ZeroDivisionError is a special case of more a general exception class named ArithmeticError;
+ArithmeticError is a special case of a more general exception class named just Exception;
+Exception is a special case of a more general class named BaseException;
+
+This also means that replacing the exception's name with either Exception or BaseException won't change the program's behavior.
+Let's summarize:
+
+each exception raised falls into the first matching branch;
+the matching branch doesn't have to specify the same exception exactly - it's enough that the exception is more general (more abstract) than the raised one.
+
+Remember:
+
+the order of the branches matters!
+don't put more general exceptions before more concrete ones;
+this will make the latter one unreachable and useless;
+moreover, it will make your code messy and inconsistent;
+Python won't generate any error messages regarding this issue.
+
+50. If you want to handle two or more exceptions in the same way, you can use the following syntax:
+
+try:
+    :
+except (exc1, exc2):
+    :
+
+If an exception is raised inside a function, it can be handled:
+
+inside the function;
+outside the function;
+
+def bad_fun(n):
+    try:
+        return 1 / n
+    except ArithmeticError:
+        print("Arithmetic Problem!")
+    return None
+
+bad_fun(0)
+
+print("THE END.")
+
+
+It's also possible to let the exception propagate outside the function.
+
+def bad_fun(n):
+    return 1 / n
+
+try:
+    bad_fun(0)
+except ArithmeticError:
+    print("What happened? An exception was raised!")
+
+print("THE END.")
+
+The problem has to be solved by the invoker (or by the invoker's invoker, and so on).
+
+52. raise
+The raise instruction raises the specified exception named exc as if it was raised in a normal (natural) way:
+raise exc
+
+he instruction enables you to:
+
+simulate raising actual exceptions (e.g., to test your handling strategy)
+partially handle an exception and make another part of the code responsible for completing the handling (separation of concerns).
+
+This is how you can use it in practice.:
+
+def bad_fun(n):
+    raise ZeroDivisionError
+
+try:
+    bad_fun(0)
+except ArithmeticError:
+    print("What happened? An error?")
+
+print("THE END.")
+
+
+The raise instruction may also be utilized in the following way (note the absence of the exception's name):
+raise
+
+!!!There is one serious restriction: this kind of raise instruction may be used inside the except branch only;
+using it in any other context causes an error.!!!
+
+The instruction will immediately re-raise the same exception as currently handled.
+Thanks to this, you can distribute the exception handling among different parts of the code.
+
+def bad_fun(n):
+    try:
+        return n / 0
+    except:
+        print("I did it again!")
+        raise
+
+try:
+    bad_fun(0)
+except ArithmeticError:
+    print("I see!")
+
+print("THE END.")
+
+>>>
+I did it again!
+I see!
+THE END.
+
+
+53. assert
+assert expression
+
+It evaluates the expression;
+if the expression evaluates to True, or a non-zero numerical value, or a non-empty string, or any other value different than None,
+it won't do anything else;
+otherwise, it automatically and immediately raises an exception named AssertionError
+
+How it can be used?
+you may want to put it into your code where you want to be absolutely safe from evidently wrong data,
+and where you aren't absolutely sure that the data has been carefully examined before (e.g., inside a function used by someone else)
+raising an AssertionError exception secures your code from producing invalid results, and clearly shows the nature of the failure;
+assertions don't supersede exceptions or validate the data - they are their supplements.
+
+
+54. Key takeaways
+
+1. You cannot add more than one anonymous (unnamed) except branch after the named ones.
+
+:
+# The code that always runs smoothly.
+:
+try:
+    :
+    # Risky code.
+    :
+except Except_1:
+    # Crisis management takes place here.
+except Except_2:
+    # We save the world here.
+except:
+    # All other issues fall here.
+:
+# Back to normal.
+:
+
+
+2. All the predefined Python exceptions form a hierarchy, i.e. some of them are more general (the one named BaseException is the most general one) while others are more or less concrete (e.g. IndexError is more concrete than LookupError).
+
+You shouldn't put more concrete exceptions before the more general ones inside the same except branche sequence. For example, you can do this:
+
+try:
+    # Risky code.
+except IndexError:
+    # Taking care of mistreated lists
+except LookupError:
+    # Dealing with other erroneous lookups
+
+
+but don't do that (unless you're absolutely sure that you want some part of your code to be useless)
+
+try:
+    # Risky code.
+except LookupError:
+    # Dealing with erroneous lookups
+except IndexError:
+    # You'll never get here
+
+
+3. The Python statement raise ExceptionName can raise an exception on demand. The same statement, but lacking ExceptionName, can be used inside the try branch only, and raises the same exception which is currently being handled.
+
+
+4. The Python statement assert expression evaluates the expression and raises the AssertError exception when the expression is equal to zero, an empty string, or None. You can use it to protect some critical parts of your code from devastating data.
+
+
+
+Exercise 1
+
+What is the expected output of the following code?
+
+try:
+    print(1/0)
+except ZeroDivisionError:
+    print("zero")
+except ArithmeticError:
+    print("arith")
+except:
+    print("some")
+
+
+Check
+zero
+
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+try:
+    print(1/0)
+except ArithmeticError:
+    print("arith")
+except ZeroDivisionError:
+    print("zero")
+except:
+    print("some")
+
+
+Check
+arith
+
+
+Exercise 3
+
+What is the expected output of the following code?
+
+def foo(x):
+    assert x
+    return 1/x
+
+
+try:
+    print(foo(0))
+except ZeroDivisionError:
+    print("zero")
+except:
+    print("some")
+
+
+Check
+some
+
+55.
+https://edube.org/learn/pe-2/useful-exceptions-9
 
 
 
