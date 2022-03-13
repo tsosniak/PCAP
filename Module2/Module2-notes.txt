@@ -1177,8 +1177,91 @@ except:
 Check
 some
 
-55.
+55. Built-in exceptions
 https://edube.org/learn/pe-2/useful-exceptions-9
+
+BaseException ← Exception ← ArithmeticError
+an abstract exception including all exceptions caused by arithmetic operations like zero division or an argument's invalid domain
+
+BaseException ← Exception ← AssertionError
+a concrete exception raised by the assert instruction when its argument evaluates to False, None, 0, or an empty string
+
+BaseException: the most general (abstract) of all Python exceptions - all other exceptions are included in this one
+
+BaseException ← Exception ← LookupError ← IndexError
+a concrete exception raised when you try to access a non-existent sequence's element
+
+BaseException ← KeyboardInterrupt
+a concrete exception raised when the user uses a keyboard shortcut designed to terminate a program's execution (Ctrl-C in most OSs)
+Note: this exception is not derived from the Exception class.
+
+BaseException ← Exception ← LookupError
+an abstract exception including all exceptions caused by errors resulting from invalid references to different collections (lists, dictionaries, tuples, etc.)
+
+BaseException ← Exception ← MemoryError
+a concrete exception raised when an operation cannot be completed due to a lack of free memory.
+
+BaseException ← Exception ← ArithmeticError ← OverflowError
+a concrete exception raised when an operation produces a number too big to be successfully stored
+
+BaseException ← Exception ← StandardError ← ImportError
+a concrete exception raised when an import operation fails
+
+BaseException ← Exception ← LookupError ← KeyError
+a concrete exception raised when you try to access a collection's non-existent element (e.g., a dictionary's element)
+
+Standard Python Library at https://docs.python.org/3.6/library/exceptions.html.
+
+56. Key takeaways
+
+1. Some abstract built-in Python exceptions are:
+
+ArithmeticError,
+BaseException,
+LookupError.
+
+2. Some concrete built-in Python exceptions are:
+
+AssertionError,
+ImportError,
+IndexError,
+KeyboardInterrupt,
+KeyError,
+MemoryError,
+OverflowError.
+
+
+Exercise 1
+
+Which of the exceptions will you use to protect your code from being interrupted through the use of the keyboard?
+
+Check
+KeyboardInterrupt
+
+
+
+Exercise 2
+
+What is the name of the most general of all Python exceptions?
+
+Check
+BaseException
+
+
+Exercise 3
+
+Which of the exceptions will be raised through the following unsuccessful evaluation?
+
+huge_value = 1E250 ** 2
+
+
+Check
+OverflowError
+
+https://edube.org/quiz/pe-2/pe2-module-2-quiz-1
+
+
+
 
 
 
