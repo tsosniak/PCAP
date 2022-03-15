@@ -331,8 +331,312 @@ class Snakes
         self.__venomous = True
 
 
-12.
+12. Instance variables; __dict__
 https://edube.org/learn/pe-2/oop-properties-24
+
+In general, a class can be equipped with two different kinds of data to form a class's properties
+This kind of class property exists when and only when it is explicitly created and added to an object.
+this can be done during the object's initialization, performed by the constructor.
+Moreover, it can be done in any moment of the object's life.
+
+Such variables (properties) are called instance variables.
+The word instance suggests that they are closely connected to the objects (which are class instances), not to the classes themselves.
+
+Python objects, when created, are gifted with a small set of predefined properties and methods. Each object has got them,
+ whether you want them or not. One of them is a variable named __dict__ (it's a dictionary).
+
+__dict__ : The variable contains the names and values of all the properties (variables) the object is currently carrying
+
+
+class ExampleClass:
+    def __init__(self, val = 1):
+        self.first = val
+
+    def set_second(self, val):
+        self.second = val
+
+
+example_object_1 = ExampleClass()
+example_object_2 = ExampleClass(2)
+
+example_object_2.set_second(3)
+
+example_object_3 = ExampleClass(4)
+example_object_3.third = 5
+
+print(example_object_1.__dict__)
+print(example_object_2.__dict__)
+print(example_object_3.__dict__)
+
+>>>
+{'first': 1}
+{'second': 3, 'first': 2}
+{'third': 5, 'first': 4}
+
+ExampleClass has a constructor, which unconditionally creates an instance variable named first
+the class also has a method which creates another instance variable, named second;
+
+we've created three objects of the class ExampleClass, but all these instances differ:
+example_object_1 only has the property named first;
+example_object_2 has two properties: first and second;
+example_object_3 has been enriched with a property named third just on the fly, outside the class's code - this is possible and fully permissible.
+
+Note: modifying an instance variable of any object has no impact on all the remaining objects.
+!!! Instance variables are perfectly isolated from each other. !!!
+
+ two underscores (__)  - makes the instance variable private - it becomes inaccessible from the outer world.
+
+!!!
+class ExampleClass:
+    def __init__(self, val = 1):
+        self.__first = val
+
+    def set_second(self, val = 2):
+        self.__second = val
+
+When Python sees that you want to add an instance variable to an object and you're going to do it inside any of
+the object's methods, it mangles the operation in the following way:
+it puts a class name before your name;
+it puts an additional underscore at the beginning.
+
+This is why the __first becomes _ExampleClass__first.
+The name is now fully accessible from outside the class.
+print(example_object_1._ExampleClass__first)
+
+NOTE: The mangling won't work if you add a private instance variable outside the class code.
+In this case, it'll behave like any other ordinary property.
+
+!!!
+
+
+13. Class variables
+A class variable is a property which exists in just one copy and is stored outside any object.
+
+Note: no instance variable exists if there is no object in the class; a class variable exists in one copy even if there are no objects in the class.
+
+Class variables are created differently to their instance siblings.
+
+class ExampleClass:
+    counter = 0
+    def __init__(self, val = 1):
+        self.__first = val
+        ExampleClass.counter += 1
+
+
+example_object_1 = ExampleClass()
+example_object_2 = ExampleClass(2)
+example_object_3 = ExampleClass(4)
+
+print(example_object_1.__dict__, example_object_1.counter)
+print(example_object_2.__dict__, example_object_2.counter)
+print(example_object_3.__dict__, example_object_3.counter)
+
+>>>
+{'_ExampleClass__first': 1} 3
+{'_ExampleClass__first': 2} 3
+{'_ExampleClass__first': 4} 3
+
+
+!!! IMPORTANT !!!
+class variables aren't shown in an object's __dict__ (this is natural as class variables aren't parts of an object)
+but you can always try to look into the variable of the same name, but at the class level - we'll show you this very soon;
+a class variable always presents the same value in all class instances (objects)
+
+!!! Mangling a class variable's name has the same effects as those you're already familiar with. !!!
+
+class ExampleClass:
+    __counter = 0
+    def __init__(self, val = 1):
+        self.__first = val
+        ExampleClass.__counter += 1
+
+
+example_object_1 = ExampleClass()
+example_object_2 = ExampleClass(2)
+example_object_3 = ExampleClass(4)
+
+print(example_object_1.__dict__, example_object_1._ExampleClass__counter)
+print(example_object_2.__dict__, example_object_2._ExampleClass__counter)
+print(example_object_3.__dict__, example_object_3._ExampleClass__counter)
+
+>>>
+{'_ExampleClass__first': 1} 3
+{'_ExampleClass__first': 2} 3
+{'_ExampleClass__first': 4} 3
+
+
+14. __dict__ difference: class vs. object
+
+Now we're going to take the opportunity to show you the difference between these two __dict__ variables,
+the one from the class and the one from the object.
+
+class ExampleClass:
+    varia = 1
+    def __init__(self, val):
+        ExampleClass.varia = val
+
+
+print(ExampleClass.__dict__)
+example_object = ExampleClass(2)
+
+print(ExampleClass.__dict__)
+print(example_object.__dict__)
+
+>>>
+{'__module__': '__main__', 'varia': 1 ...
+{'__module__': '__main__', 'varia': 2 ...
+{}
+
+Naming the variable is the most important aspect of the example because:
+Changing the assignment to self.varia = val would create an instance variable of the same name as the class's one;
+Changing the assignment to varia = val would operate on a !!! method's local variable !!!;
+(we strongly encourage you to test both of the above cases - this will make it easier for you to remember the difference)
+
+class' __dict__ contains much more data than its object's counterpart.
+Note that the object's __dict__ is empty - the object has no instance variables.
+
+
+15. Checking an attribute's existence
+Python's attitude to object instantiation raises one important issue:
+you may not expect that all objects of the same class have the same sets of properties.
+
+class ExampleClass:
+    def __init__(self, val):
+        if val % 2 != 0:
+            self.a = 1
+        else:
+            self.b = 1
+
+
+example_object = ExampleClass(1)
+
+print(example_object.a)
+print(example_object.b)
+
+>>>
+1
+Traceback (most recent call last):
+  File ".main.py", line 11, in
+    print(example_object.b)
+AttributeError: 'ExampleClass' object has no attribute 'b'
+
+!!! As you can see, accessing a non-existing object (class) attribute causes an AttributeError exception. !!!
+
+16. hasattr
+Python provides a function which is able to safely check if any object/class contains a specified property.
+
+hasattr expects two arguments to be passed to it:
+the class or the object being checked;
+the name of the property whose existence has to be reported (note: it has to be a string containing the attribute name, not the name alone)
+The function returns True or False.
+
+if hasattr(example_object, 'b'):
+    print(example_object.b)
+
+Note: better solution than try.. catch..
+
+hasattr() function can operate on classes, too.
+You can use it to find out if a class variable is available
+
+!!!
+
+class ExampleClass:
+    a = 1
+    def __init__(self):
+        self.b = 2
+
+
+example_object = ExampleClass()
+
+print(hasattr(example_object, 'b'))
+print(hasattr(example_object, 'a'))
+print(hasattr(ExampleClass, 'b'))
+print(hasattr(ExampleClass, 'a'))
+
+>>>
+True
+True
+False
+True
+
+!!!
+
+17. Key takeaways
+
+1. An instance variable is a property whose existence depends on the creation of an object. Every object can have a different set of instance variables.
+
+Moreover, they can be freely added to and removed from objects during their lifetime. All object instance variables are stored inside a dedicated dictionary named __dict__, contained in every object separately.
+
+
+2. An instance variable can be private when its name starts with __, but don't forget that such a property is still accessible from outside the class using a mangled name constructed as _ClassName__PrivatePropertyName.
+
+
+3. A class variable is a property which exists in exactly one copy, and doesn't need any created object to be accessible. Such variables are not shown as __dict__ content.
+
+All a class's class variables are stored inside a dedicated dictionary named __dict__, contained in every class separately.
+
+
+4. A function named hasattr() can be used to determine if any object/class contains a specified property.
+
+For example:
+
+class Sample:
+    gamma = 0 # Class variable.
+    def __init__(self):
+        self.alpha = 1 # Instance variable.
+        self.__delta = 3 # Private instance variable.
+
+
+obj = Sample()
+obj.beta = 2  # Another instance variable (existing only inside the "obj" instance.)
+print(obj.__dict__)
+
+
+The code outputs:
+
+{'alpha': 1, '_Sample__delta': 3, 'beta': 2}
+output
+
+
+
+Exercise 1
+
+Which of the Python class properties are instance variables and which are class variables? Which of them are private?
+
+class Python:
+    population = 1
+    victims = 0
+    def __init__(self):
+        self.length_ft = 3
+        self.__venomous = False
+
+Check
+population and victims are class variables, while length and __venomous are instance variables (the latter is also private).
+
+
+
+Exercise 2
+
+You're going to negate the __venomous property of the version_2 object, ignoring the fact that the property is private. How will you do this?
+
+version_2 = Python()
+
+
+Check
+version_2._Python__venomous = not version_2._Python__venomous
+
+
+
+Exercise 3
+
+Write an expression which checks if the version_2 object contains an instance property named constrictor (yes, constrictor!).
+
+Check
+hasattr(version_2, 'constrictor')
+
+18.
+https://edube.org/learn/pe-2/section-summary-102
+
 
 
 
