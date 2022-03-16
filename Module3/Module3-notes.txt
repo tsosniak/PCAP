@@ -637,6 +637,242 @@ hasattr(version_2, 'constrictor')
 18.
 https://edube.org/learn/pe-2/section-summary-102
 
+18. Methods in detail
+method is a function embedded inside a class.
+a method is obliged to have at least one parameter (self)
+
+The name self suggests the parameter's purpose - it identifies the object for which the method is invoked.
+
+If you're going to invoke a method, you mustn't pass the argument for the self parameter - Python will set it for you.
+
+The self parameter is used to obtain access to the object's instance and class variables.
+
+class Classy:
+    varia = 2
+    def method(self):
+        print(self.varia, self.var)
+
+The self parameter is also used to invoke other object/class methods from inside the class.
+
+class Classy:
+    def other(self):
+        print("other")
+
+    def method(self):
+        print("method")
+        self.other()
+
+
+__init__
+If a class has a constructor, it is invoked automatically and implicitly when the object of the class is instantiated.
+
+The constructor:
+
+is obliged to have the self parameter (it's set automatically, as usual);
+may (but doesn't need to) have more parameters than just self; if this happens, the way in which the class name is used
+to create the object must reflect the __init__ definition;
+can be used to set up the object, i.e., properly initialize its internal state, create instance variables, instantiate
+any other objects if their existence is needed, etc.
+
+Note that the constructor:
+
+cannot return a value, as it is designed to return a newly created object and nothing else;
+cannot be invoked directly either from the object or from inside the class
+
+property name mangling applies to method names, too
+
+class Classy:
+    def visible(self):
+        print("visible")
+
+    def __hidden(self):
+        print("hidden")
+
+
+obj = Classy()
+obj.visible()
+
+try:
+    obj.__hidden()
+except:
+    print("failed")
+
+obj._Classy__hidden()
+
+
+19. The inner life of classes and objects
+__dict__ is a dictionary. Another built-in property worth mentioning is __name__, which is a string.
+
+Note: the __name__ attribute is absent from the object - it exists only inside classes.
+
+class Classy:
+    pass
+
+
+print(Classy.__name__)
+obj = Classy()
+print(type(obj).__name__)
+print(obj.__name__)
+
+>>>
+Classy
+Classy
+Traceback (most recent call last):
+  File "main.py", line 8, in <module>
+    print(obj.__name__)
+AttributeError: 'Classy' object has no attribute '__name__'
+
+
+If you want to find the class of a particular object, you can use a function named type(),
+which is able (among other things) to find a class which has been used to instantiate any object.
+
+20.The inner life of classes and objects: continued
+__module__ is a string, too - it stores the name of the module which contains the definition of the class.
+
+class Classy:
+    pass
+
+
+print(Classy.__module__)
+obj = Classy()
+print(obj.__module__)
+
+>>>
+__main__
+__main__
+
+
+21. The inner life of classes and objects: continued
+__bases__ is a tuple. The tuple contains classes (not class names) which are direct superclasses for the class.
+The order is the same as that used inside the class definition.
+
+!!! Note: only classes have this attribute - objects don't. !!!
+
+
+22. Reflection and introspection
+
+introspection, which is the ability of a program to examine the type or properties of an object at runtime;
+reflection, which goes a step further, and is the ability of a program to manipulate the values, properties and/or functions of an object at runtime.
+
+In other words, you don't have to know a complete class/object definition to manipulate the object, as the object and/or
+its class contain the metadata allowing you to recognize its features during program execution.
+
+23. Investigating classes
+
+The function named incIntsI() gets an object of any class, scans its contents in order to find all integer
+attributes with names starting with i, and increments them by one.
+
+class MyClass:
+    pass
+
+obj = MyClass()
+obj.a = 1
+obj.b = 2
+obj.i = 3
+obj.ireal = 3.5
+obj.integer = 4
+obj.z = 5
+
+
+def incIntsI(obj):
+    for name in obj.__dict__.keys():
+        if name.startswith('i'):
+            val = getattr(obj, name)
+            if isinstance(val, int):
+                setattr(obj, name, val + 1)
+
+
+print(obj.__dict__)
+incIntsI(obj)
+print(obj.__dict__)
+
+>>>
+{'a': 1, 'b': 2, 'i': 3, 'ireal': 3.5, 'integer': 4, 'z': 5}
+{'a': 1, 'b': 2, 'i': 4, 'ireal': 3.5, 'integer': 5, 'z': 5}
+
+24. Key takeaways
+
+1. A method is a function embedded inside a class. The first (or only) parameter of each method is usually named self, which is designed to identify the object for which the method is invoked in order to access the object's properties or invoke its methods.
+
+
+2. If a class contains a constructor (a method named __init__) it cannot return any value and cannot be invoked directly.
+
+
+3. All classes (but not objects) contain a property named __name__, which stores the name of the class. Additionally, a property named __module__ stores the name of the module in which the class has been declared, while the property named __bases__ is a tuple containing a class's superclasses.
+
+For example:
+
+class Sample:
+    def __init__(self):
+        self.name = Sample.__name__
+    def myself(self):
+        print("My name is " + self.name + " living in a " + Sample.__module__)
+
+
+obj = Sample()
+obj.myself()
+
+
+The code outputs:
+
+My name is Sample living in a __main__
+output
+
+
+
+Exercise 1
+
+The declaration of the Snake class is given below. Enrich the class with a method named increment(), adding 1 to the __victims property.
+
+class Snake:
+    def __init__(self):
+        self.victims = 0
+
+Check
+class Snake:
+    def __init__(self):
+        self.victims = 0
+
+    def increment(self):
+        self.victims += 1
+
+
+
+
+Exercise 2
+
+Redefine the Snake class constructor so that is has a parameter to initialize the victims field with a value passed to the object during construction.
+
+
+Check
+class Snake:
+    def __init__(self, victims):
+        self.victims = victims
+
+
+
+Exercise 3
+
+Can you predict the output of the following code?
+
+class Snake:
+    pass
+
+
+class Python(Snake):
+    pass
+
+
+print(Python.__name__, 'is a', Snake.__name__)
+print(Python.__bases__[0].__name__, 'can be', Python.__name__)
+
+
+Check
+Python is a Snake
+Snake can be Python
+
+
+25. Inheritance - why and how?
 
 
 
