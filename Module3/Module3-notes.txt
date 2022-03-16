@@ -874,6 +874,87 @@ Snake can be Python
 
 25. Inheritance - why and how?
 
+The default __str__() method returns the previous string - ugly and not very informative. You can change it just by defining your own method of the name.
+
+class Star:
+    def __init__(self, name, galaxy):
+        self.name = name
+        self.galaxy = galaxy
+
+    def __str__(self):
+        return self.name + ' in ' + self.galaxy
+
+
+sun = Star("Sun", "Milky Way")
+print(sun)
+
+
+Inheritance is a common practice (in object programming) of passing attributes and methods from the superclass (defined
+and existing) to a newly created class, called the subclass.
+
+In other words, inheritance is a way of building a new class, not from scratch, but by using an already defined repertoire of traits.
+
+The new class inherits (and this is the key) all the already existing equipment, but is able to add some new ones if needed.
+
+Thanks to that, it's possible to build more specialized (more concrete) classes using some sets of predefined general rules and behaviors
+
+superclass / subclass
+
+
+26. issubclass()
+able to identify a relationship between two classes,
+it can check if a particular class is a subclass of any other class.
+
+issubclass(ClassOne, ClassTwo)
+
+Note: each class is considered to be a subclass of itself.
+Note2: only works on classes!!! not objects (TypeError)
+
+27. isinstance()
+an object is an incarnation of a class
+whether it is an object of a certain class or not.
+
+isinstance(objectName, ClassName)
+
+first arg can be object, 2nd arg must BE class (type) - otherwise TypeError
+
+Being an instance of a class means that the object (the cake) has been prepared using a recipe contained in either the class or one of its superclasses.
+
+
+28. Inheritance: the is operator
+The is operator checks whether two variables (object_one and object_two here) refer to the same object.
+
+!!! variables don't store the objects themselves, but only the handles pointing to the internal Python memory.!!!
+!!! Assigning a value of an object variable to another variable doesn't copy the object, but only its handle. !!!
+
+29. How Python finds properties and methods
+
+Note: As there is no __str__() method within the Sub class, the printed string is to be produced within the Super class.
+This means that the __str__() method has been inherited by the Sub class.
+
+class Super:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "My name is " + self.name + "."
+
+
+class Sub(Super):
+    def __init__(self, name):
+        Super.__init__(self, name)
+
+
+obj = Sub("Andy")
+
+print(obj)
+
+>>>
+My name is Andy.
+
+https://edube.org/learn/pe-2/oop-fundamentals-inheritance-64
+
+
 
 
 
