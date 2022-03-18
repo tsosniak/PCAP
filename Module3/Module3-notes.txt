@@ -1135,6 +1135,779 @@ if there is more than one class on a particular inheritance path, Python scans t
 https://edube.org/learn/pe-2/oop-fundamentals-inheritance-71
 
 
+class One:
+    def do_it(self):
+        print("do_it from One")
+
+    def doanything(self):
+        self.do_it()
+
+
+class Two(One):
+    def do_it(self):
+        print("do_it from Two")
+
+
+one = One()
+two = Two()
+
+one.doanything()
+two.doanything()
+
+>>>
+do_it from One
+do_it from Two
+
+
+Note: the situation in which the subclass is able to modify its superclass behavior (just like in the example) is called polymorphism
+
+The method, redefined in any of the superclasses, thus changing the behavior of the superclass, is called virtual.
+
+Each class's behavior may be modified at any time by any of its subclasses.
+
+how to use polymorphism to extend class flexibility.?
+
+
+
+import time
+
+class TrackedVehicle:
+    def control_track(left, stop):
+        pass
+
+    def turn(left):
+        control_track(left, True)
+        time.sleep(0.25)
+        control_track(left, False)
+
+
+class WheeledVehicle:
+    def turn_front_wheels(left, on):
+        pass
+
+    def turn(left):
+        turn_front_wheels(left, True)
+        time.sleep(0.25)
+        turn_front_wheels(left, False)
+
+
+what's wrong with the code?
+Let's rebuild the code - we're going to introduce a superclass to gather all the similar aspects of the driving vehicles,
+moving all the specifics to the subclasses.
+
+35. How to build a hierarchy of classes: continued
+import time
+
+class Vehicle:
+    def change_direction(left, on):
+        pass
+
+    def turn(left):
+        change_direction(left, True)
+        time.sleep(0.25)
+        change_direction(left, False)
+
+
+class TrackedVehicle(Vehicle):
+    def control_track(left, stop):
+        pass
+
+    def change_direction(left, on):
+        control_track(left, on)
+
+
+class WheeledVehicle(Vehicle):
+    def turn_front_wheels(left, on):
+        pass
+
+    def change_direction(left, on):
+        turn_front_wheels(left, on)
+
+Look at the code in the editor again. This is what we've done:
+
+we defined a superclass named Vehicle, which uses the turn() method to implement a general scheme of turning,
+while the turning itself is done by a method named change_direction(); note: the former method is empty,
+as we are going to put all the details into the subclass (such a method is often called an abstract method,
+as it only demonstrates some possibility which will be instantiated later)
+we defined a subclass named TrackedVehicle (note: it's derived from the Vehicle class) which instantiated
+the change_direction() method by using the specific (concrete) method named control_track()
+respectively, the subclass named WheeledVehicle does the same trick, but uses the turn_front_wheels() method to force the vehicle to turn.
+The most important advantage (omitting readability issues) is that this form of code enables you to implement
+a brand new turning algorithm just by modifying the turn() method, which can be done in just one place, as all the vehicles will obey it.
+
+This is how polymorphism helps the developer to keep the code clean and consistent.
+
+
+36. Composition
+Composition is the process of composing an object using other different objects.
+
+It can be said that:
+
+inheritance extends a class's capabilities by adding new components and modifying existing ones; in other words,
+the complete recipe is contained inside the class itself and all its ancestors; the object takes all the class's
+belongings and makes use of them;
+
+composition projects a class as a container able to store and use other objects (derived from other classes) where
+each of the objects implements a part of a desired class's behavior.
+
+import time
+
+class Tracks:
+    def change_direction(self, left, on):
+        print("tracks: ", left, on)
+
+
+class Wheels:
+    def change_direction(self, left, on):
+        print("wheels: ", left, on)
+
+
+class Vehicle:
+    def __init__(self, controller):
+        self.controller = controller
+
+    def turn(self, left):
+        self.controller.change_direction(left, True)
+        time.sleep(0.25)
+        self.controller.change_direction(left, False)
+
+
+wheeled = Vehicle(Wheels())
+tracked = Vehicle(Tracks())
+
+wheeled.turn(True)
+tracked.turn(False)
+
+
+In inheritance: the top-most class was aware of the general rules used in turning the vehicle
+
+In composition: The class - like in the previous example - is aware of how to turn the vehicle,
+but the actual turn is done by a specialized object stored in a property named controller
+
+There are two classes named Tracks and Wheels - they know how to control the vehicle's direction.
+In this way, the vehicle's ability to turn is composed using an external object, not implemented inside the Vehicle class.
+
+!!! In other words, we have a universal vehicle and can install either tracks or wheels onto it. !!!
+
+
+37. Single inheritance vs. multiple inheritance
+The fact that you can do it does not mean you have to.
+multiple inheritance is always risky, as you have many more opportunities to make a mistake in identifying these parts
+of the superclasses which will effectively influence the new class;
+
+may make overriding extremely tricky; moreover, using the super() function becomes ambiguous;
+
+multiple inheritance violates the single responsibility principle as it makes a new class of two (or more) classes
+that know nothing about each other;
+
+we strongly suggest multiple inheritance as the last of all possible solutions
+
+
+38. Method Resolution Order (MRO)
+strategy in which a particular programming language scans through the upper part of a class’s hierarchy
+in order to find the method it currently needs
+
+class Top:
+    def m_top(self):
+        print("top")
+
+
+class Middle(Top):
+    def m_middle(self):
+        print("middle")
+
+
+class Bottom(Middle, Top):
+    def m_bottom(self):
+        print("bottom")
+
+
+!!! the order in which the two superclasses have been listed between parenthesis is compliant with the code's structure !!!
+
+
+class Top:
+    def m_top(self):
+        print("top")
+
+
+class Middle(Top):
+    def m_middle(self):
+        print("middle")
+
+
+class Bottom(Top, Middle):
+    def m_bottom(self):
+        print("bottom")
+
+
+object = Bottom()
+object.m_bottom()
+object.m_middle()
+object.m_top()
+
+>>>
+Traceback (most recent call last):
+  File "main.py", line 11, in <module>
+    class Bottom(Top, Middle):
+TypeError: Cannot create a consistent method resolution
+order (MRO) for bases Top, Middle
+
+!!!
+
+it won't run anymore.
+The order we tried to force (Top, Middle) is incompatible with the inheritance path
+which is derived from the code's structure.
+
+!!!
+
+39. The diamond problem
+class A:
+    pass
+
+
+class B(A):
+    pass
+
+
+class C(A):
+    pass
+
+
+class D(B, C):
+    pass
+
+
+d = D()
+
+
+40. Key takeaways
+
+1. A method named __str__() is responsible for converting an object's contents into a (more or less) readable string.
+You can redefine it if you want your object to be able to present itself in a more elegant form. For example:
+
+class Mouse:
+    def __init__(self, name):
+        self.my_name = name
+
+
+    def __str__(self):
+        return self.my_name
+
+
+the_mouse = Mouse('mickey')
+print(the_mouse)  # Prints "mickey".
+
+
+2. A function named issubclass(Class_1, Class_2) is able to determine if Class_1 is a subclass of Class_2. For example:
+
+class Mouse:
+    pass
+
+
+class LabMouse(Mouse):
+    pass
+
+
+print(issubclass(Mouse, LabMouse), issubclass(LabMouse, Mouse))  # Prints "False True"
+
+
+3. A function named isinstance(Object, Class) checks if an object comes from an indicated class. For example:
+
+class Mouse:
+    pass
+
+
+class LabMouse(Mouse):
+    pass
+
+
+mickey = Mouse()
+print(isinstance(mickey, Mouse), isinstance(mickey, LabMouse))  # Prints "True False".
+
+
+4. A operator called is checks if two variables refer to the same object. For example:
+
+class Mouse:
+    pass
+
+
+mickey = Mouse()
+minnie = Mouse()
+cloned_mickey = mickey
+print(mickey is minnie, mickey is cloned_mickey)  # Prints "False True".
+
+
+
+5. A parameterless function named super() returns a reference to the nearest superclass of the class. For example:
+
+class Mouse:
+    def __str__(self):
+        return "Mouse"
+
+
+class LabMouse(Mouse):
+    def __str__(self):
+        return "Laboratory " + super().__str__()
+
+
+doctor_mouse = LabMouse();
+print(doctor_mouse)  # Prints "Laboratory Mouse".
+
+
+6. Methods as well as instance and class variables defined in a superclass are automatically inherited by their subclasses.
+For example:
+
+class Mouse:
+    Population = 0
+    def __init__(self, name):
+        Mouse.Population += 1
+        self.name = name
+
+    def __str__(self):
+        return "Hi, my name is " + self.name
+
+class LabMouse(Mouse):
+    pass
+
+professor_mouse = LabMouse("Professor Mouser")
+print(professor_mouse, Mouse.Population)  # Prints "Hi, my name is Professor Mouser 1"
+
+
+7. In order to find any object/class property, Python looks for it inside:
+
+the object itself;
+all classes involved in the object's inheritance line from bottom to top;
+if there is more than one class on a particular inheritance path, Python scans them from left to right;
+if both of the above fail, the AttributeError exception is raised.
+
+8. If any of the subclasses defines a method/class variable/instance variable of the same name as existing in
+the superclass, the new name overrides any of the previous instances of the name. For example:
+
+class Mouse:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "My name is " + self.name
+
+class AncientMouse(Mouse):
+    def __str__(self):
+        return "Meum nomen est " + self.name
+
+mus = AncientMouse("Caesar")  # Prints "Meum nomen est Caesar"
+print(mus)
+
+41. Exercises
+Exercises
+Scenario
+
+Assume that the following piece of code has been successfully executed:
+
+class Dog:
+    kennel = 0
+    def __init__(self, breed):
+        self.breed = breed
+        Dog.kennel += 1
+    def __str__(self):
+        return self.breed + " says: Woof!"
+
+
+class SheepDog(Dog):
+    def __str__(self):
+        return super().__str__() + " Don't run away, Little Lamb!"
+
+
+class GuardDog(Dog):
+    def __str__(self):
+        return super().__str__() + " Stay where you are, Mister Intruder!"
+
+
+rocky = SheepDog("Collie")
+luna = GuardDog("Dobermann")
+
+
+Now answer the questions from exercises 1-4.
+
+
+
+Exercise 1
+
+What is the expected output of the following piece of code?
+
+print(rocky)
+print(luna)
+
+Check
+Collie says: Woof! Don't run away, Little Lamb!
+Dobermann says: Woof! Stay where you are, Mister Intruder!
+
+
+
+Exercise 2
+
+What is the expected output of the following piece of code?
+
+print(issubclass(SheepDog, Dog), issubclass(SheepDog, GuardDog))
+print(isinstance(rocky, GuardDog), isinstance(luna, GuardDog))
+
+Check
+True False
+False True
+
+
+
+Exercise 3
+
+What is the expected output of the following piece of code?
+
+print(luna is luna, rocky is luna)
+print(rocky.kennel)
+
+Check
+True False
+2
+
+
+
+Exercise 4
+
+Define a SheepDog's subclass named LowlandDog, and equip it with an __str__() method overriding an inherited method of
+the same name. The new dog's __str__() method should return the string "Woof! I don't like mountains!" .
+
+Check
+class LowlandDog(SheepDog):
+	def __str__(self):
+		return Dog.__str__(self) + " I don't like mountains!"
+
+42. More about exceptions
+https://edube.org/learn/pe-2/exceptions-once-again-24
+
+def reciprocal(n):
+    try:
+        n = 1 / n
+    except ZeroDivisionError:
+        print("Division failed")
+        n = None
+    else:
+        print("Everything went fine")
+    finally:
+        print("It's time to say goodbye")
+        return n
+
+
+print(reciprocal(2))
+print(reciprocal(0))
+
+>>>
+Everything went fine
+It's time to say good bye
+0.5
+Division failed
+It's time to say good bye
+None
+
+
+43. Exceptions are classes
+when an exception is raised, an object of the class is instantiated, and goes through all levels of program execution,
+looking for the except branch that is prepared to deal with it.
+
+to catch the exception object:
+try:
+    i = int("Hello!")
+except Exception as e:
+    print(e)
+    print(e.__str__())
+
+>>>
+invalid literal for int() with base 10: 'Hello!'
+invalid literal for int() with base 10: 'Hello!'
+
+All the built-in Python exceptions form a hierarchy of classes.
+!!! There is no obstacle to extending it if you find it reasonable.
+
+Exception.__subclasses__()
+>>>
+returns list like:
+[<class 'TypeError'>, <class 'StopAsyncIteration'>, <class 'StopIteration'>, ...]
+
+
+44. Detailed anatomy of exceptions
+The BaseException class introduces a property named args. It's a tuple designed to gather all arguments passed to the class constructor
+It is empty if the construct has been invoked without any arguments,
+or contains just one element when the constructor gets one argument (we don't count the self argument here), and so on.
+
+def print_args(args):
+    lng = len(args)
+    if lng == 0:
+        print("")
+    elif lng == 1:
+        print(args[0])
+    else:
+        print(str(args))
+
+
+try:
+    raise Exception
+except Exception as e:
+    print(e, e.__str__(), sep=' : ' ,end=' : ')
+    print_args(e.args)
+
+try:
+    raise Exception("my exception")
+except Exception as e:
+    print(e, e.__str__(), sep=' : ', end=' : ')
+    print_args(e.args)
+
+try:
+    raise Exception("my", "exception")
+except Exception as e:
+    print(e, e.__str__(), sep=' : ', end=' : ')
+    print_args(e.args)
+
+>>>
+:  :
+my exception : my exception : my exception
+('my', 'exception') : ('my', 'exception') : ('my', 'exception')
+
+
+
+try:
+    raise Exception("my exception")
+except Exception as e:
+    print(e.args)
+
+>>>
+('my exception',)
+
+
+45. How to create your own exception
+https://edube.org/learn/pe-2/exceptions-once-again-29
+
+This is done by defining your own, new exceptions as subclasses derived from predefined ones.
+
+class MyZeroDivisionError(ZeroDivisionError):
+    pass
+
+Note: if you want to create an exception which will be utilized as a specialized case of any built-in exception,
+derive it from just this one. If you want to build your own hierarchy, and don't want it to be closely
+connected to Python's exception tree, derive it from any of the top exception classes, like Exception.
+
+
+you may want to build your own exception structure.
+You can start building it by defining a general exception as a new base class for any other specialized exception
+
+class PizzaError(Exception):
+    def __init__(self, pizza, message):
+        Exception.__init__(self, message)
+        self.pizza = pizza
+
+
+class TooMuchCheeseError(PizzaError):
+    def __init__(self, pizza, cheese, message):
+        PizzaError._init__(self, pizza, message)
+        self.cheese = cheese
+
+
+The TooMuchCheeseError exception needs more information than the regular PizzaError exception,
+so we add it to the constructor - the name cheese is then stored for further processing.
+
+# 1
+class PizzaError(Exception):
+    def __init__(self, pizza, message):
+        Exception.__init__(self, message)
+        self.pizza = pizza
+
+
+class TooMuchCheeseError(PizzaError):
+    def __init__(self, pizza, cheese, message):
+        # super().__init__(pizza, message)
+        self.cheese = cheese
+
+
+def make_pizza(pizza, cheese):
+    if pizza not in ['margherita', 'capricciosa', 'calzone']:
+        raise PizzaError(pizza, "no such pizza on the menu")
+    if cheese > 100:
+        raise TooMuchCheeseError(pizza, cheese, "too much cheese")
+    print("Pizza ready!")
+
+for (pz, ch) in [('calzone', 0), ('margherita', 110), ('mafia', 20)]:
+    try:
+        make_pizza(pz, ch)
+    except TooMuchCheeseError as tmce:
+        print(tmce, ':', tmce.cheese)
+    except PizzaError as pe:
+        print(pe, ':', pe.pizza)
+
+>>>
+Pizza ready!
+('margherita', 110, 'too much cheese') : 110
+no such pizza on the menu : mafia
+
+
+class PizzaError(Exception):
+    def __init__(self, pizza, message):
+        Exception.__init__(self, message)
+        self.pizza = pizza
+
+
+class TooMuchCheeseError(PizzaError):
+    def __init__(self, pizza, cheese, message):
+        super().__init__(pizza, message)
+        self.cheese = cheese
+
+
+def make_pizza(pizza, cheese):
+    if pizza not in ['margherita', 'capricciosa', 'calzone']:
+        raise PizzaError(pizza, "no such pizza on the menu")
+    if cheese > 100:
+        raise TooMuchCheeseError(pizza, cheese, "too much cheese")
+    print("Pizza ready!")
+
+for (pz, ch) in [('calzone', 0), ('margherita', 110), ('mafia', 20)]:
+    try:
+        make_pizza(pz, ch)
+    except TooMuchCheeseError as tmce:
+        print(tmce, ':', tmce.cheese)
+    except PizzaError as pe:
+        print(pe, ':', pe.pizza)
+
+>>>
+Pizza ready!
+too much cheese : 110
+no such pizza on the menu : mafia
+
+
+Another sapmle with default args:
+class PizzaError(Exception):
+    def __init__(self, pizza='uknown', message=''):
+        Exception.__init__(self, message)
+        self.pizza = pizza
+
+
+class TooMuchCheeseError(PizzaError):
+    def __init__(self, pizza='uknown', cheese='>100', message=''):
+        PizzaError.__init__(self, pizza, message)
+        self.cheese = cheese
+
+
+def make_pizza(pizza, cheese):
+    if pizza not in ['margherita', 'capricciosa', 'calzone']:
+        raise PizzaError
+    if cheese > 100:
+        raise TooMuchCheeseError
+    print("Pizza ready!")
+
+
+for (pz, ch) in [('calzone', 0), ('margherita', 110), ('mafia', 20)]:
+    try:
+        make_pizza(pz, ch)
+    except TooMuchCheeseError as tmce:
+        print(tmce, ':', tmce.cheese)
+    except PizzaError as pe:
+        print(pe, ':', pe.pizza)
+
+>>>
+Pizza ready!
+ : >100
+ : uknown
+
+
+46. Key takeaways
+
+1. The else: branch of the try statement is executed when there has been no exception during the execution of the try: block.
+
+
+2. The finally: branch of the try statement is always executed.
+
+
+3. The syntax except Exception_Name as an exception_object: lets you intercept an object carrying information about
+a pending exception. The object's property named args (a tuple) stores all arguments passed to the object's constructor.
+
+
+4. The exception classes can be extended to enrich them with new capabilities, or to adopt their traits to newly defined exceptions.
+
+For example:
+
+try:
+    assert __name__ == "__main__"
+except:
+    print("fail", end=' ')
+else:
+    print("success", end=' ')
+finally:
+    print("done")
+
+
+The code outputs: success done.
+
+
+Exercise 1
+
+What is the expected output of the following code?
+
+import math
+
+try:
+    print(math.sqrt(9))
+except ValueError:
+    print("inf")
+else:
+    print("fine")
+
+
+Check
+3.0
+fine
+
+
+
+Exercise 2
+
+What is the expected output of the following code?
+
+import math
+
+try:
+    print(math.sqrt(-9))
+except ValueError:
+    print("inf")
+else:
+    print("fine")
+finally:
+    print("the end")
+
+
+Check
+inf
+the end
+
+
+Exercise 3
+
+What is the expected output of the following code?
+
+import math
+
+class NewValueError(ValueError):
+    def __init__(self, name, color, state):
+        self.data = (name, color, state)
+
+try:
+    raise NewValueError("Enemy warning", "Red alert", "High readiness")
+except NewValueError as nve:
+    for arg in nve.args:
+        print(arg, end='! ')
+
+
+Check
+Enemy warning! Red alert! High readiness!
+
+https://edube.org/learn/pe-2/module-completion-33
+
+
+
+
 
 
 
