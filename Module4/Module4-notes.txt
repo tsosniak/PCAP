@@ -424,6 +424,100 @@ allow the simultaneous opening of more than n files
 18. File streams
 https://edube.org/learn/pe-2/processing-files-36
 
+If the opening is successful, the program will be allowed to perform only the operations which are consistent with the declared open mode.
+two basic operations performed on the stream:
+read from the stream: the portions of the data are retrieved from the file and placed in a memory area managed by the program (e.g., a variable);
+write to the stream: the portions of the data from the memory (e.g., a variable) are transferred to the file.
+
+three basic modes used to open the stream:
+read mode: a stream opened in this mode allows read operations only; trying to write to the stream will cause an exception UnsupportedOperation
+write mode: a stream opened in this mode allows write operations only - attempting to read the stream will cause the exception UnsupportedOperation
+update mode: a stream opened in this mode allows both writes and reads.
+
+The stream behaves almost like a tape recorder.
+
+19. File handles
+every file is hidden behind an object of an adequate class.
+An object of an adequate class is created when you open the file and annihilate it at the time of closing.
+
+The operations you're allowed to use are imposed by the way in which you've opened the file.
+
+objects:
+
+IOBase
+RawIOBase, BufferedIOBase, TextIOBase
+
+Note: you never use constructors to bring these objects to life. The only way you obtain them is to invoke the function named open().
+The function analyses the arguments you've provided, and automatically creates the required object.
+
+If you want to get rid of the object, you invoke the method named close().
+
+For our purposes, we'll concern ourselves only with streams represented by BufferIOBase and TextIOBase objects
+
+all the streams are divided into text and binary streams.
+
+The text streams ones are structured in lines; that is, they contain typographical characters
+(letters, digits, punctuation, etc.) arranged in rows (lines). This file is written (or read) mostly character by character, or line by line.
+
+The binary streams don't contain text but a sequence of bytes of any value.
+for example, an executable program, an image, an audio or a video clip, a database file, etc.
+the data is read/written byte by byte, or block by block
+
+Unix - end of line: LF (ASCII code 10), in Python programs as \n
+Windows - end of line: CR and LF (ASCII codes 13 and 10), in Python encoded as: \r\n
+
+Solution: designed at the level of classes
+
+opening of the stream:
+stream = open(file, mode = 'r', encoding = None)
+
+Let's analyze it:
+-the name of the function (open) speaks for itself; if the opening is successful, the function returns a stream object;
+otherwise, an exception is raised (e.g., FileNotFoundError if the file you're going to read doesn't exist);
+-the first parameter of the function (file) specifies the name of the file to be associated with the stream;
+-the second parameter (mode) specifies the open mode used for the stream;
+-the third parameter (encoding) specifies the encoding type (e.g., UTF-8 when working with text files)
+
+the opening must be the very first operation performed on the stream.
+the mode and encoding arguments may be omitted - their default values are assumed then.
+
+20. Opening the streams: modes
+r open mode: read
+the stream will be opened in read mode;
+file associated with the stream must exist and has to be readable
+
+w open mode: write
+the stream will be opened in write mode;
+file associated with the stream doesn't need to exist
+if it doesn't exist it will be created; if it exists, it will be truncated to the length of zero (erased);
+
+a open mode: append
+the stream will be opened in append mode;
+file associated with the stream doesn't need to exist;
+if it doesn't exist, it will be created; if it exists the virtual recording head will be set at the end of the file
+
+r+ open mode: read and update
+the stream will be opened in read and update mode;
+file associated with the stream must exist and has to be writeable
+both read and write operations are allowed for the stream.
+
+w+ open mode: write and update
+stream will be opened in write and update mode;
+file associated with the stream doesn't need to exist; if it doesn't exist, it will be created; the previous content of the file remains untouched;
+both read and write operations are allowed for the stream.
+
+If there is a letter b at the end of the mode string it means that the stream is to be opened in the binary mode.
+If the mode string ends with a letter t the stream is opened in the text mode.
+- Text mode is the default behaviour
+
+Finally, the successful opening of the file will set the current file position (the virtual reading/writing head)
+before the first byte of the file if the mode is not 'a' and after the last byte of file if the mode is set to 'a'.
+
+You can also open a file for its exclusive creation. You can do this using the x open mode. If the file already exists,
+the open() function will raise an exception.
+
+https://edube.org/learn/pe-2/processing-files-41
+
 
 
 
