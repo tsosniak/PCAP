@@ -519,5 +519,296 @@ the open() function will raise an exception.
 https://edube.org/learn/pe-2/processing-files-41
 
 
+21. Opening the stream for the first time
+
+open for reading:
+try:
+    stream = open("C:\Users\User\Desktop\file.txt", "rt")
+    # Processing goes here.
+    stream.close()
+except Exception as exc:
+    print("Cannot open the file:", exc)
+
+
+the open mode is defined as text to read (as text is the default setting, we can skip the t in mode string)
+in case of success we get an object from the open() function and we assign it to the stream variable;
+if open() fails, we handle the exception printing full error information (it's definitely good to know what exactly happened)
+
+22. Pre-opened streams
+When our program starts, the three streams are already opened and don't require any extra preparations
+
+import sys
+sys.stdin, sys.stdout, and sys.stderr
+
+stdin
+stdin (as standard input)
+stdin stream is normally associated with the keyboard
+the well-known input() function reads data from stdin by default.
+
+sys.stdout
+stdout (as standard output)
+stdout stream is normally associated with the screen
+the well-known print() function outputs the data to the stdout stream
+
+sys.stderr
+stderr (as standard error output)
+stderr stream is normally associated with the screen, pre-open for writing, regarded as the primary place where
+the running program should send information on the errors encountered during its work;
+the separation of stdout (useful results produced by the program) from the stderr (error messages,
+undeniably useful but does not provide results) gives the possibility of redirecting these two types of information to the different targets.
+
+23. Closing streams
+That action is performed by a method invoked from within open stream object: stream.close().
+this doesn't include the stdin, stdout, and stderr streams which don't require it
+
+the function expects exactly no arguments; the stream doesn't need to be opened
+the function returns nothing but raises IOError exception in case of error;
+
+Note:
+This belief is only partly justified. If the stream was opened for writing and then a series of write operations were performed,
+it may happen that the data sent to the stream has not been transferred to the physical device yet (due to mechanism called caching or buffering).
+Since the closing of the stream forces the buffers to flush them, it may be that the flushes fail and therefore the close() fails too.
+
+
+24. Diagnosing stream problems
+The IOError object is equipped with a property named errno
+
+try:
+    # Some stream operations.
+except IOError as exc:
+    print(exc.errno)
+
+The value of the errno attribute can be compared with one of the predefined symbolic constants defined in the errno module.
+
+errno.EACCES → Permission denied
+The error occurs when you try, for example, to open a file with the read only attribute for writing.
+
+errno.EBADF → Bad file number
+The error occurs when you try, for example, to operate with an unopened stream.
+
+errno.EEXIST → File exists
+The error occurs when you try, for example, to rename a file with its previous name.
+
+errno.EFBIG → File too large
+The error occurs when you try to create a file that is larger than the maximum allowed by the operating system.
+
+errno.EISDIR → Is a directory
+The error occurs when you try to treat a directory name as the name of an ordinary file.
+
+errno.EMFILE → Too many open files
+The error occurs when you try to simultaneously open more streams than acceptable for your operating system.
+
+errno.ENOENT → No such file or directory
+The error occurs when you try to access a non-existent file/directory.
+
+errno.ENOSPC → No space left on device
+The error occurs when there is no free space on the media.
+
+
+there is a function that can dramatically simplify the error handling code.
+Its name is strerror(), and it comes from the os module and expects just one argument - an error number.
+
+from os import strerror
+
+try:
+    s = open("c:/users/user/Desktop/file.txt", "rt")
+    # Actual processing goes here.
+    s.close()
+except Exception as exc:
+    print("The file could not be opened:", strerror(exc.errno))
+
+
+25. Key takeaways
+1. A file needs to be open before it can be processed by a program, and it should be closed when the processing is finished.
+
+Opening the file associates it with the stream, which is an abstract representation of the physical data stored on the media.
+The way in which the stream is processed is called open mode. Three open modes exist:
+
+read mode – only read operations are allowed;
+write mode – only write operations are allowed;
+update mode – both writes and reads are allowed.
+
+2. Depending on the physical file content, different Python classes can be used to process files. In general,
+the BufferedIOBase is able to process any file, while TextIOBase is a specialized class dedicated to processing text files
+(i.e. files containing human-visible texts divided into lines using new-line markers). Thus, the streams can be divided into binary and text ones.
+
+
+3. The following open() function syntax is used to open a file:
+
+open(file_name, mode=open_mode, encoding=text_encoding)
+
+The invocation creates a stream object and associates it with the file named file_name, using the specified open_mode
+and setting the specified text_encoding, or it raises an exception in the case of an error.
+
+
+4. Three predefined streams are already open when the program starts:
+
+sys.stdin – standard input;
+sys.stdout – standard output;
+sys.stderr – standard error output.
+
+4. The IOError exception object, created when any file operations fails (including open operations), contains a property named errno,
+which contains the completion code of the failed action. Use this value to diagnose the problem.
+
+Exercise 1
+
+How do you encode an open() function’s mode argument value if you're going to create a new text file to only fill it with an article?
+
+Check
+"wt" or "w"
+
+Exercise 2
+
+What is the meaning of the value represented by errno.EACESS?
+
+Check
+Permission denied: you're not allowed to access the file's content.
+
+Exercise 3
+
+What is the expected output of the following code, assuming that the file named file does not exist?
+
+import errno
+
+try:
+    stream = open("file", "rb")
+    print("exists")
+    stream.close()
+except IOError as error:
+    if error.errno == errno.ENOENT:
+        print("absent")
+    else:
+        print("unknown")
+
+Check
+absent
+
+
+26. Processing text files
+
+If your text files contain some national characters not covered by the standard ASCII charset, you may need an additional step.
+Your open() function invocation may require an argument denoting specific text encoding.
+For example, if you're using a Unix/Linux OS configured to use UTF-8 as a system-wide setting, the open() function may look as follows:
+stream = open('file.txt', 'rt', encoding='utf-8')
+
+f = r'C:\Users\SosniT25951\PycharmProjects\PCAP\PE2 syllabus.txt'
+stream = open(f, "rt", encoding = "utf-8")
+print(stream)
+>>>
+<_io.TextIOWrapper name='C:\\Users\\SosniT25951\\PycharmProjects\\PCAP\\PE2 syllabus.txt' mode='rt' encoding='utf-8'>
+stream.close()
+
+
+27. read() function
+If applied to a text file, the function is able to:
+read a desired number of characters (including just one) from the file, and return them as a string;
+read all the file contents, and return them as a string;
+if there is nothing more to read (the virtual reading head reaches the end of the file), the function returns an empty string.
+
+sample:
+try to read the very first character from the file ch = s.read(1)
+try to read the next character, and the process repeats. : ch = s.read(1) //  !!! virtual pointer moved!!!
+
+
+If you're absolutely sure that the file's length is safe and you can read the whole file to the memory at once, you can do it
+- the read() function, invoked without any arguments or with an argument that evaluates to None
+
+content = s.read()
+
+Remember - reading a terabyte-long file using this method may corrupt your OS. !!! - computer memory isn't stretchable. !!!
+
+28. readline()
+If you want to treat the file's contents as a set of lines, not a bunch of characters
+
+The method tries to read a complete line of text from the file, and returns it as a string in the case of success.
+Otherwise, it returns an empty string.
+
+now you can also count lines easily, not only characters.
+
+ccnt = lcnt = 0
+s = open('text.txt', 'rt')
+line = s.readline()
+while line != '':
+    lcnt += 1
+    for ch in line:
+        print(ch, end='')
+        ccnt += 1
+    line = s.readline()
+s.close()
+
+
+29. readlines().
+Another method, which treats text file as a set of lines
+
+The readlines() method, when invoked without arguments, tries to read all the file contents, and returns a list of strings, one element per file line.
+
+But you can convince the readlines() method to read not more than a specified number of bytes at once
+(the returning value remains the same - it's a list of a string).
+
+s = open("text.txt")
+print(s.readlines(20))
+print(s.readlines(20))
+print(s.readlines(20))
+print(s.readlines(20))
+s.close()
+
+!!! The maximum accepted input buffer size is passed to the method as its argument. !!!
+
+Note: when there is nothing to read from the file, the method returns an empty list
+
+!!! To the extent of the buffer's size, you can expect that increasing it may improve input performance,
+but there is no golden rule for it - try to find the optimal values yourself. !!!
+
+We've decided to use a 15-byte-long buffer. Don't think it's a recommendation.
+
+from os import strerror
+
+try:
+    ccnt = lcnt = 0
+    s = open('text.txt', 'rt')
+    lines = s.readlines(20)
+    while len(lines) != 0:
+        for line in lines:
+            lcnt += 1
+            for ch in line:
+                print(ch, end='')
+                ccnt += 1
+        lines = s.readlines(10)
+    s.close()
+    print("\n\nCharacters in file:", ccnt)
+    print("Lines in file:     ", lcnt)
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+
+30. object returned by the open() function
+
+object returned by the open() function is an instance of the iterable class.
+The iteration protocol defined for the file object is very simple -
+its __next__ method just returns the next line read in from the file.
+
+!!! Moreover, you can expect that the object automatically invokes close()
+when any of the file reads reaches the end of the file. !!!
+
+from os import strerror
+
+try:
+	ccnt = lcnt = 0
+	for line in open('text.txt', 'rt'):
+		lcnt += 1
+		for ch in line:
+			print(ch, end='')
+			ccnt += 1
+	print("\n\nCharacters in file:", ccnt)
+	print("Lines in file:     ", lcnt)
+except IOError as e:
+	print("I/O error occurred: ", strerror(e.errno))
+
+
+https://edube.org/learn/pe-2/working-with-real-files-48
+
+
+
+
 
 
