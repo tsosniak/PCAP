@@ -807,7 +807,203 @@ except IOError as e:
 
 https://edube.org/learn/pe-2/working-with-real-files-48
 
+31. Dealing with text files: write()
+it expects just one argument - a string that will be transferred to an open file
 
+
+32. What is a bytearray?
+it's an array containing (amorphous) bytes.
+Amorphous data is data which have no specific shape or form
+
+data = bytearray(10)
+Such an invocation creates a bytearray object able to store ten bytes.
+
+Note: such a constructor fills the whole array with zeros.
+
+they are mutable, they're a subject of the len() function, and you can access any of their elements using conventional indexing.
+
+you mustn't set any byte array elements with a value which is not an integer -- TypeError exception
+you're not allowed to assign a value that doesn't come from the range 0 to 255 inclusive -- ValueError exception
+
+You can treat any byte array elements as integer values
+
+
+33. how do we write a byte array to a binary file?
+
+from os import strerror
+
+data = bytearray(10)
+
+for i in range(len(data)):
+    data[i] = 10 + i
+
+try:
+    bf = open('file.bin', 'wb')
+    bf.write(data)
+    bf.close()
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+# Your code that reads bytes from the stream should go here.
+
+
+34. How do we read a binary file?
+How to read bytes from a stream - 1
+
+from os import strerror
+
+data = bytearray(10)
+
+try:
+    bf = open('file.bin', 'rb')
+    bf.readinto(data)
+    bf.close()
+
+    for b in data:
+        print(hex(b), end=' ')
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+if there are more data in the file than space in the argument, the read operation will stop before the end of the file;
+
+How to read bytes from a stream -2
+method named read()
+Invoked without arguments, it tries to read all the contents of the file into the memory
+it's immutable.
+
+from os import strerror
+
+try:
+    bf = open('file.bin', 'rb')
+    data = bytearray(bf.read())
+    bf.close()
+
+    for b in data:
+        print(hex(b), end=' ')
+
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+
+!!! Be careful - don't use this kind of read if you're not sure that the file's contents will fit the available memory. !!!
+
+If the read() method is invoked with an argument, it specifies the maximum number of bytes to be read.
+The method tries to read the desired number of bytes from the file, and the length of the returned object
+can be used to determine the number of bytes actually read.
+
+try:
+    bf = open('file.bin', 'rb')
+    data = bytearray(bf.read(5))
+    bf.close()
+
+    for b in data:
+        print(hex(b), end=' ')
+
+except IOError as e:
+    print("I/O error occurred:", strerror(e.errno))
+
+Note: the first five bytes of the file have been read by the code - the next five are still waiting to be processed.
+
+from os import strerror
+
+srcname = input("Enter the source file name: ")
+try:
+    src = open(srcname, 'rb')
+except IOError as e:
+    print("Cannot open the source file: ", strerror(e.errno))
+    exit(e.errno)
+
+dstname = input("Enter the destination file name: ")
+try:
+    dst = open(dstname, 'wb')
+except Exception as e:
+    print("Cannot create the destination file: ", strerror(e.errno))
+    src.close()
+    exit(e.errno)
+
+buffer = bytearray(65536)
+total  = 0
+try:
+    readin = src.readinto(buffer)
+    while readin > 0:
+        written = dst.write(buffer[:readin])
+        total += written
+        readin = src.readinto(buffer)
+except IOError as e:
+    print("Cannot create the destination file: ", strerror(e.errno))
+    exit(e.errno)
+
+print(total,'byte(s) succesfully written')
+src.close()
+dst.close()
+
+35. Key takeaways
+
+1. To read a file’s contents, the following stream methods can be used:
+
+read(number) – reads the number characters/bytes from the file and returns them as a string; is able to read the whole file at once;
+readline() – reads a single line from the text file;
+readlines(number) – reads the number lines from the text file; is able to read all lines at once;
+readinto(bytearray) – reads the bytes from the file and fills the bytearray with them;
+
+2. To write new content into a file, the following stream methods can be used:
+
+write(string) – writes a string to a text file;
+write(bytearray) – writes all the bytes of bytearray to a file;
+
+3. The open() method returns an iterable object which can be used to iterate through all the file's lines inside a for loop. For example:
+
+for line in open("file", "rt"):
+    print(line, end='')
+
+
+The code copies the file's contents to the console, line by line. Note: the stream closes itself automatically when it reaches the end of the file.
+
+
+Exercise 1
+
+What do we expect from the readlines() method when the stream is associated with an empty file?
+
+Check
+An empty list (a zero-length list).
+
+
+
+Exercise 2
+
+What is the following code intended to do?
+
+for line in open("file", "rt"):
+    for char in line:
+        if char.lower() not in "aeiouy ":
+            print(char, end='')
+
+
+Check
+It copies the file's contents to the console, ignoring all vowels.
+
+
+
+Exercise 3
+
+You're going to process a bitmap stored in a file named image.png, and you want to read its contents as a whole into a bytearray variable named image. Add a line to the following code to achieve this goal.
+
+try:
+    stream = open("image.png", "rb")
+    # Insert a line here.
+    stream.close()
+except IOError:
+    print("failed")
+else:
+    print("success")
+
+
+Check
+image = bytearray(stream.read())
+
+https://edube.org/learn/pe-2/the-os-module-9
+
+36.
 
 
 
