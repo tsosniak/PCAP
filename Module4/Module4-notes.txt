@@ -1003,7 +1003,177 @@ image = bytearray(stream.read())
 
 https://edube.org/learn/pe-2/the-os-module-9
 
-36.
+36. os module
+lets you interact with the operating system using Python.
+unctions of the os module, to perform operations on files and directories along with the corresponding commands.
+
+Also, os module enables you to:
+
+get information about the operating system;
+manage processes;
+operate on I/O streams using file descriptors.
+
+37. Getting information about the operating system - uname
+function called uname, which returns an object containing the following attributes:
+
+systemname — stores the name of the operating system;
+nodename — stores the machine name on the network;
+release — stores the operating system release;
+version — stores the operating system version;
+machine — stores the hardware identifier, e.g., x86_64.
+
+the uname function only works on some Unix systems. If you use Windows,
+you can use the uname function in the platform module, which returns a similar result.
+
+38. os.name
+posix — you'll get this name if you use Unix;
+nt — you'll get this name if you use Windows;
+java — you'll get this name if your code is written in Jython.
+
+39. Creating directories in Python - mkdir
+mkdir function requires a path that can be relative or absolute
+
+my_first_directory — this is a relative path which will create the my_first_directory directory in the current working directory;
+./my_first_directory — this is a relative path that explicitly points to the current working directory. It has the same effect as the path above;
+../my_first_directory — this is a relative path that will create the my_first_directory directory in the parent directory of the current working directory;
+/python/my_first_directory — this is the absolute path that will create the my_first_directory directory, which in turn is in the python directory in the root directory.
+
+import os
+
+os.mkdir("my_first_directory")
+print(os.listdir())
+
+The mkdir function creates a directory in the specified path.
+Note that running the program twice will raise a FileExistsError.
+
+In addition to the path argument, the mkdir function can optionally take the mode argument, which specifies directory permissions.
+
+To change the directory permissions, we recommend the chmod function
+
+The listdir function returns a list containing the names of the files and directories that are in the path passed as an argument.
+
+40. Recursive directory creation - makedirs
+The makedirs function enables recursive directory creation, which means that all directories in the path will be created
+
+import os
+
+os.makedirs("my_first_directory/my_second_directory")
+os.chdir("my_first_directory")
+print(os.listdir())
+
+>>>
+['my_second_directory']
+
+To move between directories, you can use a function called chdir
+ which changes the current working directory to the specified path.
+ it takes any relative or absolute path
+
+41. Where am I now?
+os.getcwd()
+the getcwd function returns the absolute path to the directories.
+
+42. Deleting directories in Python
+To delete a single directory, you can use a function called rmdir,
+which takes the path as its argument. Look at the code in the editor.
+
+os.mkdir("my_first_directory")
+print(os.listdir())
+os.rmdir("my_first_directory")
+print(os.listdir())
+
+removedirs function - To remove a directory and its subdirectories
+ which requires you to specify a path containing all directories that should be removed:
+
+os.makedirs("my_first_directory/my_second_directory")
+os.removedirs("my_first_directory/my_second_directory")
+print(os.listdir())
+
+!!! As with the rmdir function, if one of the directories doesn't exist or isn't empty, an exception will be raised. !!!
+
+43. The system() function
+All functions presented in this part of the course can be replaced by a function called system
+
+import os
+
+returned_value = os.system("mkdir my_first_directory")
+print(returned_value)
+>>> 0
+my_first_directory directory has been created
+
+44. Key takeaways
+1. The uname function returns an object that contains information about the current operating system. The object has the following attributes:
+
+systemname (stores the name of the operating system)
+nodename (stores the machine name on the network)
+release (stores the operating system release)
+version (stores the operating system version)
+machine (stores the hardware identifier, e.g. x86_64.)
+2. The name attribute available in the os module allows you to distinguish the operating system. It returns one of the following three values:
+
+posix (you'll get this name if you use Unix)
+nt (you'll get this name if you use Windows)
+java (you'll get this name if your code is written in something like Jython)
+3. The mkdir function creates a directory in the path passed as its argument. The path can be either relative or absolute, e.g:
+
+import os
+
+os.mkdir("hello") # the relative path
+os.mkdir("/home/python/hello") # the absolute path
+
+
+Note: If the directory exists, a FileExistsError exception will be thrown. In addition to the mkdir function, the os module provides the makedirs function, which allows you to recursively create all directories in a path.
+
+4. The result of the listdir() function is a list containing the names of the files and directories that are in the path passed as its argument.
+
+It's important to remember that the listdir function omits the entries '.' and '..', which are displayed, for example, when using the ls -a command on Unix systems. If the path isn't passed, the result will be returned for the current working directory.
+
+5. To move between directories, you can use a function called chdir(), which changes the current working directory to the specified path. As its argument, it takes any relative or absolute path.
+
+If you want to find out what the current working directory is, you can use the getcwd() function, which returns the path to it.
+
+6. To remove a directory, you can use the rmdir() function, but to remove a directory and its subdirectories, use the removedirs() function.
+
+7. On both Unix and Windows, you can use the system function, which executes a command passed to it as a string, e.g.:
+
+import os
+
+returned_value = os.system("mkdir hello")
+
+
+The system function on Windows returns the value returned by shell after running the command given, while on Unix it returns the exit status of the process.
+
+
+
+
+Exercise 1
+
+What is the output of the following snippet if you run it on Unix?
+
+import os
+print(os.name)
+
+
+Check
+posix
+
+
+Exercise 2
+
+What is the output of the following snippet?
+
+import os
+
+os.mkdir("hello")
+print(os.listdir())
+
+
+Check
+['hello']
+
+45. datetime module
+https://edube.org/learn/pe-2/the-datetime-module-3
+
+
 
 
 
