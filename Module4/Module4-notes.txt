@@ -1813,6 +1813,177 @@ calendar.LocalHTMLCalendar – is a subclass of the calendar.HTMLCalendar class.
 69. Creating a Calendar object
 https://edube.org/learn/pe-2/the-calendar-module-23
 
+The Calendar class constructor takes one optional parameter named firstweekday: must be an integer between 0-6
+
+import calendar
+
+c = calendar.Calendar(calendar.SUNDAY)
+
+for weekday in c.iterweekdays():
+    print(weekday, end=" ")
+
+>>>
+6 0 1 2 3 4 5
+iterweekdays method returns an iterator for week day numbers.
+
+
+70. The itermonthdates() method
+The Calendar class has several methods that return an iterator.
+
+itermonthdates method, which requires specifying the year and month.
+
+import calendar
+
+c = calendar.Calendar()
+
+for date in c.itermonthdates(2019, 11):
+    print(date, end=" ")
+
+>>>
+2019-10-28 2019-10-29 2019-10-30 2019-10-31 ... 2019-12-01
+
+Each day is represented by a datetime.date object.
+
+all days in the specified month and year are returned, as well as all days before the beginning of the month
+or the end of the month that are necessary to get a complete week.
+
+
+71. Other methods that return iterators
+itermonthdays
+
+import calendar
+
+c = calendar.Calendar()
+
+for iter in c.itermonthdays(2019, 11):
+    print(iter, end=" ")
+
+>>>
+0 0 0 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 0
+
+0s- These are days outside the specified month range that are added to keep the complete week.
+
+itermonthdates2 – returns days in the form of tuples consisting of a day of the month number and a week day number
+itermonthdates3 – returns days in the form of tuples consisting of a year, a month, and a day of the month numbers
+itermonthdates4 – returns days in the form of tuples consisting of a year, a month, a day of the month, and a day of the week numbers
+
+72. The monthdays2calendar() method
+
+more in docs:
+https://docs.python.org/3/library/calendar.html
+
+takes the year and month, and then returns a list of weeks in a specific month.
+Note that the days numbers outside the month are represented by 0, while the weekday numbers are a number from 0-6,
+where 0 is Monday and 6 is Sunday.
+
+import calendar
+
+c = calendar.Calendar()
+
+for data in c.monthdays2calendar(2020, 12):
+    print(data)
+
+>>>
+[(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)]
+[(7, 0), (8, 1), (9, 2), (10, 3), (11, 4), (12, 5), (13, 6)]
+[(14, 0), (15, 1), (16, 2), (17, 3), (18, 4), (19, 5), (20, 6)]
+[(21, 0), (22, 1), (23, 2), (24, 3), (25, 4), (26, 5), (27, 6)]
+[(28, 0), (29, 1), (30, 2), (31, 3), (0, 4), (0, 5), (0, 6)]
+
+
+73. Key takeaways
+1. In the calendar module, the days of the week are displayed from Monday to Sunday. Each day of the week has its representation in the form of an integer, where the first day of the week (Monday) is represented by the value 0, while the last day of the week (Sunday) is represented by the value 6.
+
+
+2. To display a calendar for any year, call the calendar function with the year passed as its argument, e.g.:
+
+import calendar
+print(calendar.calendar(2020))
+
+
+Note: A good alternative to the above function is the function called prcal, which also takes the same parameters as the calendar function, but doesn't require the use of the print function to display the calendar.
+
+
+3. To display a calendar for any month of the year, call the month function, passing year and month to it. For example:
+
+import calendar
+print(calendar.month(2020, 9))
+
+
+Note: You can also use the prmonth function, which has the same parameters as the month function, but doesn't require the use of the print function to display the calendar.
+
+
+4. The setfirstweekday function allows you to change the first day of the week. It takes a value from 0 to 6, where 0 is Sunday and 6 is Saturday.
+
+
+5. The result of the weekday function is a day of the week as an integer value for a given year, month, and day:
+
+import calendar
+print(calendar.weekday(2020, 9, 29)) # This displays 1, which means Tuesday.
+
+
+
+6. The weekheader function returns the weekday names in a shortened form. The weekheader method requires you to specify the width in characters for one day of the week. If the width you provide is greater than 3, you'll still get the abbreviated weekday names consisting of only three characters. For example:
+
+import calendar
+print(calendar.weekheader(2)) # This display: Mo Tu We Th Fr Sa Su
+
+
+
+7. A very useful function available in the calendar module is the function called isleap, which, as the name suggests, allows you to check whether the year is a leap year or not:
+
+import calendar
+print(calendar.isleap(2020)) # This displays: True
+
+
+
+8. You can create a calendar object yourself using the Calendar class, which, when creating its object, allows you to change the first day of the week with the optional firstweekday parameter, e.g.:
+
+import calendar
+
+c = calendar.Calendar(2)
+
+for weekday in c.iterweekdays():
+    print(weekday, end=" ")
+# Result: 2 3 4 5 6 0 1
+
+
+The iterweekdays returns an iterator for weekday numbers. The first value returned is always equal to the value of the firstweekday property.
+
+
+
+
+Exercise 1
+
+What is the output of the following snippet?
+
+import calendar
+print(calendar.weekheader(1))
+
+
+Check
+M T W T F S S
+
+
+Exercise 2
+
+What is the output of the following snippet?
+
+import calendar
+
+c = calendar.Calendar()
+
+for weekday in c.iterweekdays():
+    print(weekday, end=" ")
+
+
+Check
+0 1 2 3 4 5 6
+
+https://edube.org/learn/pe-2/module-completion-34
+
+
+
 
 
 
